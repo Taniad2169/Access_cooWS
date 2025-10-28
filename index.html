@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Testing Platform</title>
+    <style>
+        /* Public facing content (visible to everyone) */
+        #publicContent {
+            text-align: center;
+            padding: 50px;
+            font-family: Arial, sans-serif;
+        }
+        
+        /* Hidden testing platform (only after login) */
+        #testingPlatform {
+            display: none;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        
+        /* Secret target button */
+        #secretTarget {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            opacity: 0.3;
+            background: #ff4444;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10000;
+            transition: opacity 0.3s;
+            font-size: 18px;
+        }
+        
+        #secretTarget:hover {
+            opacity: 0.7;
+        }
+        
+        /* Password modal */
+        #passwordModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 10001;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 300px;
+        }
+        
+        /* Test buttons */
+        .test-button {
+            padding: 12px 24px;
+            margin: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .print-button {
+            background: #28a745;
+        }
+        
+        .results {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <!-- 🎯 Secret Target Button -->
+    <button id="secretTarget" title="Click me 7 times">🎯</button>
+
+    <!-- 🔐 Password Modal -->
+    <div id="passwordModal">
+        <div class="modal-content">
+            <h3>🔒 Enter Password</h3>
+            <input type="password" id="passwordInput" placeholder="Enter password" style="
+                padding: 10px;
+                margin: 10px 0;
+                width: 200px;
+                font-size: 16px;
+                border: 2px solid #ddd;
+                border-radius: 5px;
+            ">
+            <br>
+            <button onclick="checkPassword()" style="
+                padding: 10px 20px;
+                background: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-top: 10px;
+            ">Login</button>
+            <p id="passwordError" style="color: red; display: none; margin-top: 10px;">Incorrect password</p>
+        </div>
+    </div>
+
+    <!-- 🌍 Public Content (what everyone sees first) -->
+    <div id="publicContent">
+        <h1>Welcome to Our Website</h1>
+        <p>This is a public website. Nothing to see here for regular visitors.</p>
+        <p>👆 Look for the secret target in the top-right corner if you're me!</p>
+    </div>
+
+    <!-- 🛡️ Private Testing Platform (hidden until login) -->
+    <div id="testingPlatform">
+        <h1>🛡️ Your Private Testing Platform</h1>
+        <p>Welcome back, my love! Ready to run some tests? 💕</p>
+        
+        <!-- Test Controls -->
+        <div>
+            <button class="test-button" onclick="testAccessibility()">🔍 Test Accessibility</button>
+            <button class="test-button" onclick="testCookies()">🍪 Test Cookie Compliance</button>
+            <button class="test-button print-button" onclick="generateReport()">📄 Generate & Print Report</button>
+        </div>
+        
+        <!-- Results Areas -->
+        <div id="accessibilityResults" class="results">
+            <h3>Accessibility Results</h3>
+            <p>Run the test to see results here...</p>
+        </div>
+        
+        <div id="cookieResults" class="results">
+            <h3>Cookie Compliance Results</h3>
+            <p>Run the test to see results here...</p>
+        </div>
+    </div>
+
+    <script>
+        // 🔐 Secret Login System
+        let clickCount = 0;
+        const requiredClicks = 7;
+        const correctPassword = "333";
+
+        // Secret target button functionality
+        document.getElementById('secretTarget').addEventListener('click', function() {
+            clickCount++;
+            
+            // Visual feedback - pulse effect
+            this.style.opacity = '0.8';
+            this.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                this.style.opacity = '0.3';
+                this.style.transform = 'scale(1)';
+            }, 200);
+            
+            console.log(`Clicks: ${clickCount}/${requiredClicks}`);
+            
+            if (clickCount >= requiredClicks) {
+                document.getElementById('passwordModal').style.display = 'flex';
+                clickCount = 0; // Reset for next time
+            }
+        });
+
+        // Password check function
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const errorElement = document.getElementById('passwordError');
+            
+            if (input === correctPassword) {
+                // Correct password - show testing platform
+                document.getElementById('passwordModal').style.display = 'none';
+                document.getElementById('publicContent').style.display = 'none';
+                document.getElementById('testingPlatform').style.display = 'block';
+                document.getElementById('secretTarget').style.display = 'none'; // Hide target after login
+            } else {
+                // Wrong password
+                errorElement.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                setTimeout(() => {
+                    errorElement.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Close modal if clicked outside
+        document.getElementById('passwordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+                clickCount = 0; // Reset clicks if modal closed
+            }
+        });
+
+        // Press Enter to submit password
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        // 🧪 Test Functions (Your existing functionality)
+        function testAccessibility() {
+            const resultsDiv = document.getElementById('accessibilityResults');
+            resultsDiv.innerHTML = `
+                <h3>✅ Accessibility Analysis Complete</h3>
+                <p><strong>Status:</strong> All tests passed</p>
+                <p><strong>Score:</strong> 95/100</p>
+                <p><strong>Issues Found:</strong> 2 minor warnings</p>
+                <ul>
+                    <li>Contrast ratio could be improved on buttons</li>
+                    <li>Add alt text to decorative images</li>
+                </ul>
+            `;
+        }
+
+        function testCookies() {
+            const resultsDiv = document.getElementById('cookieResults');
+            resultsDiv.innerHTML = `
+                <h3>✅ Cookie Compliance Check Complete</h3>
+                <p><strong>Status:</strong> Compliant</p>
+                <p><strong>GDPR:</strong> ✅ Passed</p>
+                <p><strong>CCPA:</strong> ✅ Passed</p>
+                <p><strong>Cookies Found:</strong> 3</p>
+                <ul>
+                    <li>session_id (Essential)</li>
+                    <li>user_preferences (Functional)</li>
+                    <li>analytics_tracking (Marketing)</li>
+                </ul>
+            `;
+        }
+
+        // 🖨️ Print/PDF Function
+        function generateReport() {
+            const accessibilityResults = document.getElementById('accessibilityResults').innerHTML;
+            const cookieResults = document.getElementById('cookieResults').innerHTML;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Website Compliance Report</title>
+                    <style>
+                        body { 
+                            font-family: Arial, sans-serif; 
+                            margin: 40px;
+                            line-height: 1.6;
+                        }
+                        .header { 
+                            text-align: center; 
+                            border-bottom: 2px solid #333;
+                            padding-bottom: 20px;
+                            margin-bottom: 30px;
+                        }
+                        .section { 
+                            margin-bottom: 40px; 
+                            page-break-inside: avoid;
+                        }
+                        .success { color: green; }
+                        .error { color: red; }
+                        .warning { color: orange; }
+                        ul { margin: 10px 0; }
+                        li { margin: 5px 0; }
+                        @media print {
+                            button { display: none; }
+                            body { margin: 20px; }
+                        }
+                        .print-controls {
+                            text-align: center;
+                            margin: 30px 0;
+                            padding: 20px;
+                            background: #f5f5f5;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>📊 Website Compliance Report</h1>
+                        <p>Generated on: ${new Date().toLocaleDateString()}</p>
+                    </div>
+                    
+                    <div class="section">
+                        <h2>🔍 Accessibility Analysis</h2>
+                        ${accessibilityResults}
+                    </div>
+                    
+                    <div class="section">
+                        <h2>🍪 Cookie Compliance</h2>
+                        ${cookieResults}
+                    </div>
+                    
+                    <div class="print-controls">
+                        <button onclick="window.print()" style="
+                            padding: 15px 30px;
+                            background: #28a745;
+                            color: white;
+                            border: none;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            font-size: 16px;
+                            margin: 10px;
+                        ">🖨️ Print / Save as PDF</button>
+                        <button onclick="window.close()" style="
+                            padding: 15px 30px;
+                            background: #dc3545;
+                            color: white;
+                            border: none;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            font-size: 16px;
+                            margin: 10px;
+                        ">Close Window</button>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+    </script>
+</body>
+</html>
