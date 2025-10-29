@@ -103,8 +103,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* Removed .ai-toggle CSS */
-
         #cookieResult, #accessibilityResult {
             border: 1px solid #ccc;
             padding: 12px;
@@ -207,18 +205,18 @@
             font-weight: bold;
             margin: 10px 0;
             padding: 10px;
-            background: #10A37F; /* Set to ChatGPT color */
+            background: #10A37F; 
             color: white;
             border-radius: 5px;
         }
 
         .loading {
-            color: #10A37F; /* Set to ChatGPT color */
+            color: #10A37F; 
             font-style: italic;
         }
 
         .section-title {
-            background: #10A37F; /* Set to ChatGPT color */
+            background: #10A37F; 
             color: white;
             padding: 15px;
             border-radius: 8px;
@@ -255,6 +253,7 @@
             margin: 15px 0;
         }
 
+        /* ✨ ADDED: Smooth scroll for the whole page */
         html {
             scroll-behavior: smooth;
         }
@@ -514,7 +513,7 @@
             }
         };
 
-        let currentAI = 'chatgpt'; // Fixed to chatgpt
+        let currentAI = 'chatgpt'; 
         let apiConnected = false;
 
         // Initialize when page loads
@@ -523,43 +522,7 @@
             document.getElementById('aiName').textContent = 'ChatGPT';
         });
 
-        // ✅ FIX: API Connection Test Function - sends empty prompt
-        async function checkAPIConnection() {
-            const statusElement = document.getElementById('apiStatus');
-            
-            try {
-                statusElement.innerHTML = '🔄 Testing API connection...';
-                statusElement.className = 'api-status testing';
-                
-                // Use the correct endpoint for ChatGPT
-                const endpointPath = API_CONFIG.endpoints.chatgpt;
-                
-                // ✅ FIX: Send a valid prompt (even if empty) to satisfy backend validation
-                const response = await fetch(`${API_CONFIG.baseURL}${endpointPath}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ prompt: "Test connection" }) 
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    apiConnected = true;
-                    statusElement.innerHTML = '✅ API Connected Successfully!';
-                    statusElement.className = 'api-status connected';
-                } else {
-                    // Still throw an error if status is not 200-299
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
-            } catch (error) {
-                apiConnected = false;
-                statusElement.innerHTML = `❌ API Connection Failed: ${error.message}`;
-                statusElement.className = 'api-status error';
-            }
-        }
-
+        // ✨ ADDED: Smooth scroll function
         function smoothScrollToElement(elementId) {
             const element = document.getElementById(elementId);
             if (element) {
@@ -573,8 +536,40 @@
                 }, 3000);
             }
         }
+        
+        // API Connection Test Function - sends empty prompt
+        async function checkAPIConnection() {
+            const statusElement = document.getElementById('apiStatus');
+            
+            try {
+                statusElement.innerHTML = '🔄 Testing API connection...';
+                statusElement.className = 'api-status testing';
+                
+                const endpointPath = API_CONFIG.endpoints.chatgpt;
+                
+                // FIX: Send a valid prompt (even if empty) to satisfy backend validation
+                const response = await fetch(`${API_CONFIG.baseURL}${endpointPath}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt: "Test connection" }) 
+                });
 
-        // Removed selectAI function
+                if (response.ok) {
+                    apiConnected = true;
+                    statusElement.innerHTML = '✅ API Connected Successfully!';
+                    statusElement.className = 'api-status connected';
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+            } catch (error) {
+                apiConnected = false;
+                statusElement.innerHTML = `❌ API Connection Failed: ${error.message}`;
+                statusElement.className = 'api-status error';
+            }
+        }
 
         document.getElementById('chatgptQuestion').addEventListener('input', function() {
             const text = this.value;
@@ -593,14 +588,13 @@
             }
         });
 
-        // 💕 ADDED: Main API Call Function - simplified for ChatGPT
+        // Main API Call Function
         async function callAPI(endpoint, data) {
             if (!apiConnected) {
                 throw new Error('API not connected. Please check the API status above.');
             }
 
             try {
-                // Endpoint is fixed to chatgpt
                 const endpointPath = API_CONFIG.endpoints.chatgpt; 
                 const fullURL = `${API_CONFIG.baseURL}${endpointPath}`;
                 
@@ -609,18 +603,17 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(data) // data must contain { prompt: "..." }
+                    body: JSON.stringify(data)
                 });
 
                 if (!response.ok) {
                     const errorText = await response.text();
-                    // Attempt to parse JSON error if available, otherwise use text
                     let errorMessage = errorText;
                     try {
                         const errorJson = JSON.parse(errorText);
                         errorMessage = errorJson.error || errorText;
                     } catch (e) {
-                        // Ignore JSON parse error and use raw text
+                        // Ignore JSON parse error
                     }
                     throw new Error(`HTTP ${response.status}: ${errorMessage}`);
                 }
@@ -633,7 +626,7 @@
             }
         }
 
-        // 💕 IMPROVED: Test with AI function with accurate prompts
+        // Test with AI function with accurate prompts
         async function testWithAI(url, type) {
             const state = document.getElementById('stateSelect').value;
             let stateSpecificInfo = '';
@@ -675,7 +668,6 @@ Provide a detailed analysis including:
 5. State-specific compliance notes if applicable`;
 
             try {
-                // Fixed: endpoint name to chatgpt
                 const result = await callAPI('chatgpt', { 
                     prompt: prompt,
                     type: type,
@@ -707,7 +699,6 @@ Provide a detailed analysis including:
             resultDiv.innerHTML = `<div class="loading">💭 ChatGPT is thinking...</div>`;
 
             try {
-                // Fixed: endpoint name to chatgpt
                 const result = await callAPI('chatgpt', { 
                     prompt: question,
                     type: 'general',
@@ -717,9 +708,8 @@ Provide a detailed analysis including:
                 resultDiv.className = "pass chatgpt-response-container expanded";
                 resultDiv.innerHTML = `<strong>🤖 ChatGPT Response:</strong>\n\n${result.response || result.message}`;
                 
-                setTimeout(() => {
-                    smoothScrollToElement('chatgptResultContainer');
-                }, 500);
+                // ✨ CALL: Smooth scroll to AI result container
+                smoothScrollToElement('chatgptResultContainer');
                 
             } catch (error) {
                 resultDiv.className = "fail chatgpt-response-container";
@@ -744,9 +734,8 @@ Provide a detailed analysis including:
                 resultDiv.className = "pass";
                 resultDiv.innerHTML = result;
                 
-                setTimeout(() => {
-                    smoothScrollToElement('cookieResultContainer');
-                }, 500);
+                // ✨ CALL: Smooth scroll to Cookie result container
+                smoothScrollToElement('cookieResultContainer');
                 
             } catch (error) {
                 resultDiv.className = "fail";
@@ -771,9 +760,8 @@ Provide a detailed analysis including:
                 resultDiv.className = "pass";
                 resultDiv.innerHTML = result;
                 
-                setTimeout(() => {
-                    smoothScrollToElement('accessibilityResultContainer');
-                }, 500);
+                // ✨ CALL: Smooth scroll to Accessibility result container
+                smoothScrollToElement('accessibilityResultContainer');
                 
             } catch (error) {
                 resultDiv.className = "fail";
@@ -898,7 +886,6 @@ Provide a detailed analysis including:
                 document.getElementById('passwordModal').style.display = 'flex';
                 clickCount = 0;
                 
-                // 💕 CURSOR FIX: Focus on password input after modal appears
                 setTimeout(() => {
                     document.getElementById('passwordInput').focus();
                 }, 100);
@@ -918,7 +905,6 @@ Provide a detailed analysis including:
                 errorElement.style.display = 'block';
                 document.getElementById('passwordInput').value = '';
                 
-                // 💕 CURSOR FIX: Refocus on password input after wrong password
                 setTimeout(() => {
                     document.getElementById('passwordInput').focus();
                 }, 100);
