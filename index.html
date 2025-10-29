@@ -361,7 +361,7 @@
                 border-radius: 5px;
             ">
             <br>
-            <button onclick="checkPassword()" style="
+            <button onclick="checkPassword()" id="loginButton" style="
                 padding: 10px 20px;
                 background: #007bff;
                 color: white;
@@ -968,9 +968,10 @@
         let clickCount = 0;
         const secretTarget = document.getElementById('secretTarget');
         const passwordModal = document.getElementById('passwordModal');
+        const passwordInput = document.getElementById('passwordInput');
         const publicContent = document.getElementById('publicContent');
         const testingPlatform = document.getElementById('testingPlatform');
-        // NOTE: Restored your secret password here
+        // NOTE: Restored your secret password
         const correctPassword = "333"; 
 
         secretTarget.addEventListener('click', () => {
@@ -978,11 +979,22 @@
             if (clickCount >= 7) {
                 clickCount = 0; // Reset count
                 passwordModal.style.display = 'flex'; // Show modal
+                
+                // FIX 1: Automatically focus the input field
+                passwordInput.focus();
+            }
+        });
+
+        // FIX 2: Handle Enter key press inside the modal
+        passwordInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent default form submission if applicable
+                checkPassword();
             }
         });
 
         function checkPassword() {
-            const input = document.getElementById('passwordInput').value;
+            const input = passwordInput.value;
             const error = document.getElementById('passwordError');
 
             if (input === correctPassword) {
@@ -991,10 +1003,11 @@
                 testingPlatform.style.display = 'block';
                 error.style.display = 'none';
                 // Reset input for next time
-                document.getElementById('passwordInput').value = '';
+                passwordInput.value = '';
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 error.style.display = 'block';
+                passwordInput.focus(); // Re-focus on error
             }
         }
 
