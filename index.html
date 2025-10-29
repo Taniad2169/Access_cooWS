@@ -5,21 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Private Testing Platform</title>
     <style>
-        /* Public facing content (visible to everyone) */
         #publicContent {
             text-align: center;
             padding: 50px;
             font-family: Arial, sans-serif;
         }
         
-        /* Hidden testing platform (only after login) */
         #testingPlatform {
             display: none;
             padding: 20px;
             font-family: Arial, sans-serif;
         }
         
-        /* Secret target button */
         #secretTarget {
             position: fixed;
             top: 10px;
@@ -40,7 +37,6 @@
             opacity: 0.7;
         }
         
-        /* Password modal */
         #passwordModal {
             display: none;
             position: fixed;
@@ -62,7 +58,6 @@
             min-width: 300px;
         }
         
-        /* Test buttons */
         .test-button {
             padding: 12px 24px;
             margin: 10px;
@@ -101,7 +96,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Highlight result container when scrolled to */
         .results.highlight {
             background: #fff3cd;
             border-left: 4px solid #ffc107;
@@ -109,7 +103,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* AI Toggle Switch */
         .ai-toggle {
             display: flex;
             justify-content: center;
@@ -141,19 +134,16 @@
             transform: scale(1.05);
         }
 
-        /* Gemini Style */
         .toggle-option.gemini.active {
             background: #8B5CF6;
             border-color: #8B5CF6;
         }
 
-        /* ChatGPT Style */
         .toggle-option.chatgpt.active {
             background: #10A37F;
             border-color: #10A37F;
         }
 
-        /* Result containers styling */
         #cookieResult, #accessibilityResult {
             border: 1px solid #ccc;
             padding: 12px;
@@ -165,7 +155,6 @@
             line-height: 1.5;
         }
 
-        /* ChatGPT Result Container - Expandable */
         #chatgptResult {
             border: 1px solid #10A37F;
             padding: 20px;
@@ -197,7 +186,6 @@
             color: green;
         }
 
-        /* Print report container with red border */
         .print-report-container {
             border: 3px solid red !important;
             padding: 20px;
@@ -206,7 +194,6 @@
             border-radius: 8px;
         }
 
-        /* Website input */
         #websiteInput {
             width: 70%; 
             padding: 12px;
@@ -216,7 +203,6 @@
             font-size: 16px;
         }
 
-        /* State dropdown */
         #stateSelect {
             width: 200px;
             padding: 12px;
@@ -227,7 +213,6 @@
             background: white;
         }
 
-        /* ChatGPT input - 300 words */
         #chatgptQuestion {
             width: 90%;
             padding: 15px;
@@ -241,7 +226,6 @@
             max-height: 200px;
         }
 
-        /* ChatGPT response container - 1000 words capacity */
         .chatgpt-response-container {
             min-height: 200px;
             max-height: none;
@@ -257,7 +241,6 @@
             margin-bottom: 10px;
         }
 
-        /* Current AI indicator */
         .current-ai {
             text-align: center;
             font-weight: bold;
@@ -269,13 +252,11 @@
             display: none;
         }
 
-        /* Loading spinner */
         .loading {
             color: #007bff;
             font-style: italic;
         }
 
-        /* Section styling */
         .section-title {
             background: linear-gradient(45deg, #10A37F, #8B5CF6);
             color: white;
@@ -306,7 +287,6 @@
             color: #333;
         }
 
-        /* Button container */
         .button-group {
             display: flex;
             justify-content: center;
@@ -315,22 +295,28 @@
             margin: 15px 0;
         }
 
-        /* Smooth scroll behavior */
         html {
             scroll-behavior: smooth;
         }
 
-        /* Target for scrolling */
         .scroll-target {
             scroll-margin-top: 20px;
+        }
+
+        .demo-notice {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            color: #155724;
         }
     </style>
 </head>
 <body>
-    <!-- 🎯 Secret Target Button -->
     <button id="secretTarget" title="Click me 7 times">🎯</button>
 
-    <!-- 🔐 Password Modal -->
     <div id="passwordModal">
         <div class="modal-content">
             <h3>🔒 Enter Password</h3>
@@ -356,18 +342,19 @@
         </div>
     </div>
 
-    <!-- 🌍 Public Content (what everyone sees first) -->
     <div id="publicContent">
         <h1>Welcome to Our Website</h1>
         <p>This is a public website. Nothing to see here for regular visitors.</p>
     </div>
 
-    <!-- 🛡️ Private Testing Platform (hidden until login) -->
     <div id="testingPlatform">
         <h1>🛡️ Your Private Testing Platform</h1>
         <p>Welcome back, my love! Ready to run some tests? 💕</p>
         
-        <!-- State Compliance Section -->
+        <div class="demo-notice">
+            <strong>✅ Live Mode:</strong> Connected to AI services via secure Vercel API endpoints!
+        </div>
+        
         <div class="state-compliance">
             <h2>🏛️ State Compliance Testing</h2>
         </div>
@@ -427,7 +414,6 @@
             </select>
         </div>
         
-        <!-- AI Toggle Switch -->
         <div class="ai-toggle">
             <div class="toggle-option gemini active" onclick="selectAI('gemini')">
                 🔮 Gemini AI
@@ -437,24 +423,20 @@
             </div>
         </div>
 
-        <!-- Current AI Indicator -->
         <div class="current-ai" id="currentAI">
             Currently using: <span id="aiName">Gemini AI</span>
         </div>
         
-        <!-- Website Input -->
         <div style="text-align: center; margin: 20px 0;">
             <input type="text" id="websiteInput" placeholder="https://www.example.com" value="https://www.thewebswan.com">
         </div>
         
-        <!-- Test Controls -->
         <div class="button-group">
             <button class="test-button" id="testCookieBtn">🍪 Test Cookie Compliance</button>
             <button class="test-button" id="testAccessibilityBtn">🔍 Test Accessibility</button>
             <button class="test-button print-button" onclick="generateReport()">📄 Generate Report</button>
         </div>
         
-        <!-- Results Areas -->
         <div class="results scroll-target" id="cookieResultContainer">
             <h3>Cookie Compliance Results</h3>
             <div id="cookieResult">Select a state and run the cookie test to see results here...</div>
@@ -465,7 +447,6 @@
             <div id="accessibilityResult">Select a state and run the accessibility test to see results here...</div>
         </div>
 
-        <!-- 💬 Regular ChatGPT Section -->
         <div class="section-title">
             <h2>💬 AI Assistant - Ask Me Anything</h2>
         </div>
@@ -500,48 +481,6 @@
     </div>
 
     <script>
-        // ====== YOUR VERCEL BACKEND API FUNCTIONS ======
-        async function fetchChatGPTResult(prompt) {
-            try {
-                const response = await fetch("/api/chatgpt", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ prompt: prompt })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                return data.result || "No response from ChatGPT.";
-            } catch (err) {
-                console.error("ChatGPT API error:", err);
-                return "Error contacting ChatGPT service.";
-            }
-        }
-
-        async function fetchGeminiResult(prompt) {
-            try {
-                const response = await fetch("/api/gemini", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ prompt: prompt })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                return data.result || "No response from Gemini.";
-            } catch (err) {
-                console.error("Gemini API error:", err);
-                return "Error contacting Gemini service.";
-            }
-        }
-
-        // State compliance laws data
         const stateLaws = {
             california: { 
                 cookie: "CCPA/CPRA - California Consumer Privacy Act", 
@@ -586,33 +525,25 @@
             washington: { cookie: "Washington My Health My Data Act", accessibility: "Washington Law Against Discrimination" }
         };
 
-        // ====== SMOOTH SCROLL FUNCTION ======
         function smoothScrollToElement(elementId) {
             const element = document.getElementById(elementId);
             if (element) {
-                // Add highlight class
                 element.classList.add('highlight');
-                
-                // Smooth scroll to element
                 element.scrollIntoView({ 
                     behavior: 'smooth', 
                     block: 'center'
                 });
-                
-                // Remove highlight after 3 seconds
                 setTimeout(() => {
                     element.classList.remove('highlight');
                 }, 3000);
             }
         }
 
-        // ====== AI SELECTION SYSTEM ======
-        let currentAI = 'gemini'; // Default to Gemini
+        let currentAI = 'gemini';
 
         function selectAI(ai) {
             currentAI = ai;
             
-            // Update toggle buttons
             document.querySelectorAll('.toggle-option').forEach(option => {
                 option.classList.remove('active');
             });
@@ -625,12 +556,10 @@
                 document.getElementById('aiName').textContent = 'ChatGPT';
             }
             
-            // Show current AI indicator
             const currentAIDiv = document.getElementById('currentAI');
             currentAIDiv.style.display = 'block';
         }
 
-        // ====== WORD COUNT FOR AI ASSISTANT ======
         document.getElementById('chatgptQuestion').addEventListener('input', function() {
             const text = this.value;
             const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
@@ -639,7 +568,6 @@
             document.getElementById('wordCount').textContent = words;
             document.getElementById('charCount').textContent = chars;
             
-            // Warning if approaching limits
             if (words > 300 || chars > 1500) {
                 this.style.borderColor = 'red';
             } else if (words > 250 || chars > 1200) {
@@ -649,7 +577,57 @@
             }
         });
 
-        // ====== AI ASSISTANT FUNCTION ======
+        async function callAPI(endpoint, data) {
+            try {
+                const response = await fetch(`/api/${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error(`API Error (${endpoint}):`, error);
+                throw error;
+            }
+        }
+
+        async function testWithAI(url, type) {
+            const state = document.getElementById('stateSelect').value;
+            let stateSpecificInfo = '';
+            
+            if (state && stateLaws[state]) {
+                const stateName = document.getElementById('stateSelect').selectedOptions[0].text;
+                const laws = stateLaws[state];
+                stateSpecificInfo = `\n\nState: ${stateName}\nCookie Law: ${laws.cookie}\nAccessibility Law: ${laws.accessibility}`;
+            }
+
+            const prompt = `Analyze the website ${url} for ${type}. ${stateSpecificInfo}\n\nProvide a detailed analysis including:\n1. Overall compliance score (out of 100)\n2. Key findings\n3. Specific issues detected\n4. Recommendations for improvement\n5. State-specific compliance notes if applicable`;
+
+            const endpoint = currentAI === 'gemini' ? 'gemini' : 'chatgpt';
+            
+            try {
+                const result = await callAPI(endpoint, { 
+                    prompt: prompt,
+                    type: type,
+                    url: url,
+                    state: state
+                });
+                
+                return result.response || result.message || 'Analysis completed successfully';
+            } catch (error) {
+                throw new Error(`Failed to get AI analysis: ${error.message}`);
+            }
+        }
+
         async function askAI() {
             const question = document.getElementById('chatgptQuestion').value.trim();
             
@@ -665,101 +643,29 @@
             }
 
             const resultDiv = document.getElementById('chatgptResult');
-            resultDiv.innerHTML = `<div class="loading">💭 AI Assistant is thinking...</div>`;
+            resultDiv.innerHTML = `<div class="loading">💭 ${currentAI === 'gemini' ? 'Gemini' : 'ChatGPT'} is thinking...</div>`;
 
             try {
-                // Use ChatGPT for the AI Assistant
-                const response = await fetchChatGPTResult(question);
+                const endpoint = currentAI === 'gemini' ? 'gemini' : 'chatgpt';
+                const result = await callAPI(endpoint, { 
+                    prompt: question,
+                    type: 'general',
+                    conversational: true
+                });
+
+                resultDiv.className = "pass chatgpt-response-container expanded";
+                resultDiv.innerHTML = `<strong>🤖 ${currentAI === 'gemini' ? 'Gemini' : 'ChatGPT'} Response:</strong>\n\n${result.response || result.message}`;
                 
-                resultDiv.className = "pass";
-                resultDiv.classList.add('expanded');
-                resultDiv.innerHTML = `
-<strong>🤖 AI Assistant Response:</strong>\n\n
-${response}
-                `;
-                
-                // Smooth scroll to AI result
                 setTimeout(() => {
                     smoothScrollToElement('chatgptResultContainer');
                 }, 500);
                 
             } catch (error) {
-                console.error("AI Assistant Error:", error);
-                resultDiv.className = "fail";
-                resultDiv.innerHTML = `❌ AI Assistant Error: ${error.message}\n\n💡 Tip: You can use the "Web ChatGPT" button above to visit chat.openai.com for direct access.`;
-                
-                // Still scroll to result even on error
-                setTimeout(() => {
-                    smoothScrollToElement('chatgptResultContainer');
-                }, 500);
+                resultDiv.className = "fail chatgpt-response-container";
+                resultDiv.innerHTML = `❌ Error: ${error.message}\n\nPlease check:\n• API keys are set in Vercel environment variables\n• API endpoints are deployed correctly\n• Network connection is stable`;
             }
         }
 
-        // ====== STATE-SPECIFIC TESTING FUNCTIONS ======
-        async function testWithChatGPT(url, type) {
-            const state = document.getElementById('stateSelect').value;
-            let stateSpecificPrompt = '';
-            
-            if (state && stateLaws[state]) {
-                const stateName = document.getElementById('stateSelect').selectedOptions[0].text;
-                const laws = stateLaws[state];
-                stateSpecificPrompt = `\n\nSPECIFIC STATE REQUIREMENTS (${stateName}):
-                - Cookie Law: ${laws.cookie}
-                - Accessibility Law: ${laws.accessibility}
-                
-                Analyze specifically for ${stateName} compliance.`;
-            }
-
-            const prompt = `As a professional web compliance expert, analyze the website ${url} for ${type}.${stateSpecificPrompt} Provide:
-1. A score from 0-100
-2. Detailed analysis of compliance
-3. Specific issues found
-4. Recommendations for improvement
-5. Overall verdict
-
-Be thorough and professional in your assessment.`;
-
-            try {
-                return await fetchChatGPTResult(prompt);
-            } catch (error) {
-                console.error("ChatGPT Error:", error);
-                return `❌ ChatGPT Service Error: ${error.message}\n\nPlease check your Vercel backend configuration.`;
-            }
-        }
-
-        async function testWithGemini(url, type) {
-            const state = document.getElementById('stateSelect').value;
-            let stateSpecificPrompt = '';
-            
-            if (state && stateLaws[state]) {
-                const stateName = document.getElementById('stateSelect').selectedOptions[0].text;
-                const laws = stateLaws[state];
-                stateSpecificPrompt = `\n\nSPECIFIC STATE REQUIREMENTS (${stateName}):
-                - Cookie Law: ${laws.cookie}
-                - Accessibility Law: ${laws.accessibility}
-                
-                Analyze specifically for ${stateName} compliance.`;
-            }
-
-            const prompt = `As a professional web compliance expert, provide a comprehensive analysis of the website ${url} for ${type}.${stateSpecificPrompt} Include:
-
-1. Compliance score (0-100)
-2. Detailed assessment
-3. Specific issues identified
-4. Practical recommendations
-5. Overall conclusion
-
-Format your response in a clear, structured way.`;
-
-            try {
-                return await fetchGeminiResult(prompt);
-            } catch (error) {
-                console.error("Gemini Error:", error);
-                return `❌ Gemini Service Error: ${error.message}\n\nPlease check your Vercel backend configuration.`;
-            }
-        }
-
-        // ====== EVENT LISTENERS ======
         document.getElementById("testCookieBtn").addEventListener("click", async () => {
             const url = document.getElementById("websiteInput").value.trim();
             const state = document.getElementById('stateSelect').value;
@@ -769,35 +675,21 @@ Format your response in a clear, structured way.`;
 
             const resultDiv = document.getElementById("cookieResult");
             const stateName = document.getElementById('stateSelect').selectedOptions[0].text;
-            resultDiv.innerHTML = `<div class="loading">🔄 Testing Cookie Compliance for ${stateName} with ${currentAI === 'gemini' ? 'Gemini AI...' : 'ChatGPT...'}</div>`;
+            resultDiv.innerHTML = `<div class="loading">🔄 Testing Cookie Compliance for ${stateName} with ${currentAI === 'gemini' ? 'Gemini...' : 'ChatGPT...'}</div>`;
 
             try {
-                let result;
-                if (currentAI === 'gemini') {
-                    result = await testWithGemini(url, "cookie compliance, GDPR, CCPA, and privacy regulations");
-                } else {
-                    result = await testWithChatGPT(url, "cookie compliance, GDPR, CCPA, and privacy regulations");
-                }
+                const result = await testWithAI(url, "cookie compliance");
                 
                 resultDiv.className = "pass";
-                resultDiv.innerHTML = `
-<strong>${currentAI === 'gemini' ? '🔮 Gemini AI' : '🤖 ChatGPT'} - ${stateName} Cookie Compliance Results:</strong>\n\n
-${result}
-                `;
+                resultDiv.innerHTML = result;
                 
-                // Smooth scroll to cookie results
                 setTimeout(() => {
                     smoothScrollToElement('cookieResultContainer');
                 }, 500);
                 
             } catch (error) {
                 resultDiv.className = "fail";
-                resultDiv.innerHTML = `❌ Unexpected error: ${error.message}`;
-                
-                // Still scroll to results even on error
-                setTimeout(() => {
-                    smoothScrollToElement('cookieResultContainer');
-                }, 500);
+                resultDiv.innerHTML = `❌ Error: ${error.message}\n\nPlease check:\n• API keys are configured in Vercel\n• API endpoints are working\n• Try the other AI service`;
             }
         });
 
@@ -810,39 +702,24 @@ ${result}
 
             const resultDiv = document.getElementById("accessibilityResult");
             const stateName = document.getElementById('stateSelect').selectedOptions[0].text;
-            resultDiv.innerHTML = `<div class="loading">🔄 Testing Accessibility for ${stateName} with ${currentAI === 'gemini' ? 'Gemini AI...' : 'ChatGPT...'}</div>`;
+            resultDiv.innerHTML = `<div class="loading">🔄 Testing Accessibility for ${stateName} with ${currentAI === 'gemini' ? 'Gemini...' : 'ChatGPT...'}</div>`;
 
             try {
-                let result;
-                if (currentAI === 'gemini') {
-                    result = await testWithGemini(url, "web accessibility following WCAG 2.1 guidelines");
-                } else {
-                    result = await testWithChatGPT(url, "web accessibility following WCAG 2.1 guidelines");
-                }
+                const result = await testWithAI(url, "accessibility");
                 
                 resultDiv.className = "pass";
-                resultDiv.innerHTML = `
-<strong>${currentAI === 'gemini' ? '🔮 Gemini AI' : '🤖 ChatGPT'} - ${stateName} Accessibility Results:</strong>\n\n
-${result}
-                `;
+                resultDiv.innerHTML = result;
                 
-                // Smooth scroll to accessibility results
                 setTimeout(() => {
                     smoothScrollToElement('accessibilityResultContainer');
                 }, 500);
                 
             } catch (error) {
                 resultDiv.className = "fail";
-                resultDiv.innerHTML = `❌ Unexpected error: ${error.message}`;
-                
-                // Still scroll to results even on error
-                setTimeout(() => {
-                    smoothScrollToElement('accessibilityResultContainer');
-                }, 500);
+                resultDiv.innerHTML = `❌ Error: ${error.message}\n\nPlease check:\n• API keys are configured in Vercel\n• API endpoints are working\n• Try the other AI service`;
             }
         });
 
-        // ====== PRINT FUNCTIONS ======
         function generateReport() {
             const accessibilityResults = document.getElementById('accessibilityResult').innerHTML;
             const cookieResults = document.getElementById('cookieResult').innerHTML;
@@ -864,6 +741,83 @@ ${result}
                         .print-controls { text-align: center; margin: 30px 0; padding: 20px; background: #f5f5f5; }
                     </style>
                 </head>
+                <body>
+                    <div class="header">
+                        <h1>💬 AI Assistant Conversation Report</h1>
+                        <p><strong>Generated on:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+                    </div>
+                    
+                    <div class="print-report-container">
+                        <div class="section">
+                            <h2>❓ Your Question</h2>
+                            <div class="question">${question}</div>
+                        </div>
+                        
+                        <div class="section">
+                            <h2>🤖 AI Assistant Response</h2>
+                            ${aiResults}
+                        </div>
+                    </div>
+                    
+                    <div class="print-controls">
+                        <button onclick="window.print()" style="padding: 15px 30px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px;">🖨️ Print / Save as PDF</button>
+                        <button onclick="window.close()" style="padding: 15px 30px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px;">Close Window</button>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        let clickCount = 0;
+        const requiredClicks = 7;
+        const correctPassword = "333";
+
+        document.getElementById('secretTarget').addEventListener('click', function() {
+            clickCount++;
+            this.style.opacity = '0.8';
+            this.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                this.style.opacity = '0.3';
+                this.style.transform = 'scale(1)';
+            }, 200);
+            
+            if (clickCount >= requiredClicks) {
+                document.getElementById('passwordModal').style.display = 'flex';
+                clickCount = 0;
+            }
+        });
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const errorElement = document.getElementById('passwordError');
+            
+            if (input === correctPassword) {
+                document.getElementById('passwordModal').style.display = 'none';
+                document.getElementById('publicContent').style.display = 'none';
+                document.getElementById('testingPlatform').style.display = 'block';
+                document.getElementById('secretTarget').style.display = 'none';
+                selectAI('gemini');
+            } else {
+                errorElement.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                setTimeout(() => errorElement.style.display = 'none', 3000);
+            }
+        }
+
+        document.getElementById('passwordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+                clickCount = 0;
+            }
+        });
+
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+    </script>
+</body>
+</html>
                 <body>
                     <div class="header">
                         <h1>📊 Website Compliance Report</h1>
@@ -915,81 +869,3 @@ ${result}
                         .print-controls { text-align: center; margin: 30px 0; padding: 20px; background: #f5f5f5; }
                     </style>
                 </head>
-                <body>
-                    <div class="header">
-                        <h1>💬 AI Assistant Conversation Report</h1>
-                        <p><strong>Generated on:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
-                    </div>
-                    
-                    <div class="print-report-container">
-                        <div class="section">
-                            <h2>❓ Your Question</h2>
-                            <div class="question">${question}</div>
-                        </div>
-                        
-                        <div class="section">
-                            <h2>🤖 AI Assistant Response</h2>
-                            ${aiResults}
-                        </div>
-                    </div>
-                    
-                    <div class="print-controls">
-                        <button onclick="window.print()" style="padding: 15px 30px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px;">🖨️ Print / Save as PDF</button>
-                        <button onclick="window.close()" style="padding: 15px 30px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px;">Close Window</button>
-                    </div>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-        }
-
-        // 🔐 SECRET LOGIN SYSTEM
-        let clickCount = 0;
-        const requiredClicks = 7;
-        const correctPassword = "333";
-
-        document.getElementById('secretTarget').addEventListener('click', function() {
-            clickCount++;
-            this.style.opacity = '0.8';
-            this.style.transform = 'scale(1.2)';
-            setTimeout(() => {
-                this.style.opacity = '0.3';
-                this.style.transform = 'scale(1)';
-            }, 200);
-            
-            if (clickCount >= requiredClicks) {
-                document.getElementById('passwordModal').style.display = 'flex';
-                clickCount = 0;
-            }
-        });
-
-        function checkPassword() {
-            const input = document.getElementById('passwordInput').value;
-            const errorElement = document.getElementById('passwordError');
-            
-            if (input === correctPassword) {
-                document.getElementById('passwordModal').style.display = 'none';
-                document.getElementById('publicContent').style.display = 'none';
-                document.getElementById('testingPlatform').style.display = 'block';
-                document.getElementById('secretTarget').style.display = 'none';
-                selectAI('gemini');
-            } else {
-                errorElement.style.display = 'block';
-                document.getElementById('passwordInput').value = '';
-                setTimeout(() => errorElement.style.display = 'none', 3000);
-            }
-        }
-
-        document.getElementById('passwordModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
-                clickCount = 0;
-            }
-        });
-
-        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') checkPassword();
-        });
-    </script>
-</body>
-</html>
