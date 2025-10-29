@@ -312,6 +312,32 @@
             text-align: center;
             color: #155724;
         }
+
+        .api-status {
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .api-status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .api-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .api-status.testing {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #b3d7ff;
+        }
     </style>
 </head>
 <body>
@@ -353,6 +379,10 @@
         
         <div class="demo-notice">
             <strong>✅ Live Mode:</strong> Connected to AI services via secure Vercel API endpoints!
+        </div>
+
+        <div id="apiStatus" class="api-status testing">
+            🔄 Testing API connection...
         </div>
         
         <div class="state-compliance">
@@ -525,6 +555,64 @@
             washington: { cookie: "Washington My Health My Data Act", accessibility: "Washington Law Against Discrimination" }
         };
 
+        // API Configuration - UPDATE THIS WITH YOUR VERCEL DOMAIN
+        const API_CONFIG = {
+            baseURL: 'https://access-coo-ws.vercel.app', // ⚠️ Your Vercel domain
+            endpoints: {
+                gemini: '/api/gemini',
+                chatgpt: '/api/chatgpt',
+                test: '/api/test'
+            }
+        };
+
+        let currentAI = 'gemini';
+        let apiConnected = false;
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAPIConnection();
+            selectAI('gemini');
+        });
+
+        // Test API connection
+        async function checkAPIConnection() {
+            const statusElement = document.getElementById('apiStatus');
+            
+            try {
+                statusElement.innerHTML = '🔄 Testing API connection to Vercel...';
+                statusElement.className = 'api-status testing';
+                
+                // Test the API endpoint
+                const response = await fetch(`${API_CONFIG.baseURL}${API_CONFIG.endpoints.test}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ test: 'connection_test' })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    apiConnected = true;
+                    statusElement.innerHTML = '✅ API Connected Successfully! Vercel endpoints are ready.';
+                    statusElement.className = 'api-status connected';
+                } else {
+                    throw new Error(`HTTP ${response.status} - API endpoint not reachable`);
+                }
+                
+            } catch (error) {
+                apiConnected = false;
+                statusElement.innerHTML = `❌ API Connection Failed: ${error.message}<br>
+                    <small>Please ensure:<br>
+                    • API routes are deployed to Vercel<br>
+                    • CORS is configured in API files<br>
+                    • Domain is correct in API_CONFIG</small>`;
+                statusElement.className = 'api-status error';
+                
+                console.error('API Connection Error:', error);
+            }
+        }
+
         function smoothScrollToElement(elementId) {
             const element = document.getElementById(elementId);
             if (element) {
@@ -538,8 +626,6 @@
                 }, 3000);
             }
         }
-
-        let currentAI = 'gemini';
 
         function selectAI(ai) {
             currentAI = ai;
@@ -560,6 +646,7 @@
             currentAIDiv.style.display = 'block';
         }
 
+        // Word count for question input
         document.getElementById('chatgptQuestion').addEventListener('input', function() {
             const text = this.value;
             const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
@@ -577,12 +664,23 @@
             }
         });
 
+        // Main API call function - FIXED for Vercel
         async function callAPI(endpoint, data) {
+            if (!apiConnected) {
+                throw new Error('API not connected. Please check the API status above and ensure your Vercel API routes are deployed.');
+            }
+
             try {
-                const response = await fetch(`/api/${endpoint}`, {
+                const endpointPath = API_CONFIG.endpoints[endpoint];
+                const fullURL = `${API_CONFIG.baseURL}${endpointPath}`;
+                
+                console.log('Calling API:', fullURL, data);
+
+                const response = await fetch(fullURL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                     },
                     body: JSON.stringify(data)
                 });
@@ -596,10 +694,23 @@
                 return result;
             } catch (error) {
                 console.error(`API Error (${endpoint}):`, error);
-                throw error;
+                
+                // Provide helpful error messages
+                if (error.message.includes('Failed to fetch')) {
+                    throw new Error('Network error: Cannot connect to Vercel API server. Check your domain in API_CONFIG.');
+                }
+                if (error.message.includes('404')) {
+                    throw new Error('API endpoint not found. Make sure your API routes are deployed to Vercel.');
+                }
+                if (error.message.includes('500')) {
+                    throw new Error('Server error in Vercel API. Check your API route code and environment variables.');
+                }
+                
+                throw new Error(`API call failed: ${error.message}`);
             }
         }
 
+        // Test with AI function
         async function testWithAI(url, type) {
             const state = document.getElementById('stateSelect').value;
             let stateSpecificInfo = '';
@@ -612,10 +723,8 @@
 
             const prompt = `Analyze the website ${url} for ${type}. ${stateSpecificInfo}\n\nProvide a detailed analysis including:\n1. Overall compliance score (out of 100)\n2. Key findings\n3. Specific issues detected\n4. Recommendations for improvement\n5. State-specific compliance notes if applicable`;
 
-            const endpoint = currentAI === 'gemini' ? 'gemini' : 'chatgpt';
-            
             try {
-                const result = await callAPI(endpoint, { 
+                const result = await callAPI(currentAI, { 
                     prompt: prompt,
                     type: type,
                     url: url,
@@ -628,6 +737,7 @@
             }
         }
 
+        // Ask AI function
         async function askAI() {
             const question = document.getElementById('chatgptQuestion').value.trim();
             
@@ -646,8 +756,7 @@
             resultDiv.innerHTML = `<div class="loading">💭 ${currentAI === 'gemini' ? 'Gemini' : 'ChatGPT'} is thinking...</div>`;
 
             try {
-                const endpoint = currentAI === 'gemini' ? 'gemini' : 'chatgpt';
-                const result = await callAPI(endpoint, { 
+                const result = await callAPI(currentAI, { 
                     prompt: question,
                     type: 'general',
                     conversational: true
@@ -662,10 +771,11 @@
                 
             } catch (error) {
                 resultDiv.className = "fail chatgpt-response-container";
-                resultDiv.innerHTML = `❌ Error: ${error.message}\n\nPlease check:\n• API keys are set in Vercel environment variables\n• API endpoints are deployed correctly\n• Network connection is stable`;
+                resultDiv.innerHTML = `❌ Error: ${error.message}\n\nTroubleshooting:\n• Check API_CONFIG baseURL is correct\n• Verify Vercel deployment\n• Check browser console for details`;
             }
         }
 
+        // Cookie compliance test
         document.getElementById("testCookieBtn").addEventListener("click", async () => {
             const url = document.getElementById("websiteInput").value.trim();
             const state = document.getElementById('stateSelect').value;
@@ -689,10 +799,11 @@
                 
             } catch (error) {
                 resultDiv.className = "fail";
-                resultDiv.innerHTML = `❌ Error: ${error.message}\n\nPlease check:\n• API keys are configured in Vercel\n• API endpoints are working\n• Try the other AI service`;
+                resultDiv.innerHTML = `❌ Error: ${error.message}\n\nPlease check:\n• Vercel API routes are deployed\n• Environment variables are set\n• API_CONFIG domain is correct`;
             }
         });
 
+        // Accessibility test
         document.getElementById("testAccessibilityBtn").addEventListener("click", async () => {
             const url = document.getElementById("websiteInput").value.trim();
             const state = document.getElementById('stateSelect').value;
@@ -716,10 +827,11 @@
                 
             } catch (error) {
                 resultDiv.className = "fail";
-                resultDiv.innerHTML = `❌ Error: ${error.message}\n\nPlease check:\n• API keys are configured in Vercel\n• API endpoints are working\n• Try the other AI service`;
+                resultDiv.innerHTML = `❌ Error: ${error.message}\n\nPlease check:\n• Vercel API routes are deployed\n• Environment variables are set\n• API_CONFIG domain is correct`;
             }
         });
 
+        // Generate compliance report
         function generateReport() {
             const accessibilityResults = document.getElementById('accessibilityResult').innerHTML;
             const cookieResults = document.getElementById('cookieResult').innerHTML;
@@ -738,6 +850,58 @@
                         .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
                         .section { margin-bottom: 40px; }
                         @media print { button { display: none; } body { margin: 20px; } .print-report-container { border: 3px solid red !important; } }
+                        .print-controls { text-align: center; margin: 30px 0; padding: 20px; background: #f5f5f5; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>📊 Website Compliance Report</h1>
+                        <p><strong>Website:</strong> ${websiteUrl}</p>
+                        <p><strong>State:</strong> ${stateName}</p>
+                        <p><strong>AI Used:</strong> ${currentAI === 'gemini' ? 'Gemini AI' : 'ChatGPT'}</p>
+                        <p><strong>Generated on:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+                    </div>
+                    
+                    <div class="print-report-container">
+                        <div class="section">
+                            <h2>🔍 Accessibility Analysis</h2>
+                            ${accessibilityResults}
+                        </div>
+                        
+                        <div class="section">
+                            <h2>🍪 Cookie Compliance</h2>
+                            ${cookieResults}
+                        </div>
+                    </div>
+                    
+                    <div class="print-controls">
+                        <button onclick="window.print()" style="padding: 15px 30px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px;">🖨️ Print / Save as PDF</button>
+                        <button onclick="window.close()" style="padding: 15px 30px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px;">Close Window</button>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        // Generate AI report
+        function generateAIReport() {
+            const aiResults = document.getElementById('chatgptResult').innerHTML;
+            const question = document.getElementById('chatgptQuestion').value;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>AI Assistant Conversation Report</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+                        .print-report-container { border: 3px solid #10A37F !important; padding: 30px; margin: 20px 0; background: white; border-radius: 10px; }
+                        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
+                        .section { margin-bottom: 40px; }
+                        .question { background: #f0f9f4; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+                        @media print { button { display: none; } body { margin: 20px; } .print-report-container { border: 3px solid #10A37F !important; } }
                         .print-controls { text-align: center; margin: 30px 0; padding: 20px; background: #f5f5f5; }
                     </style>
                 </head>
@@ -769,6 +933,7 @@
             printWindow.document.close();
         }
 
+        // Secret access functionality
         let clickCount = 0;
         const requiredClicks = 7;
         const correctPassword = "333";
@@ -818,55 +983,3 @@
     </script>
 </body>
 </html>
-                <body>
-                    <div class="header">
-                        <h1>📊 Website Compliance Report</h1>
-                        <p><strong>Website:</strong> ${websiteUrl}</p>
-                        <p><strong>State:</strong> ${stateName}</p>
-                        <p><strong>AI Used:</strong> ${currentAI === 'gemini' ? 'Gemini AI' : 'ChatGPT'}</p>
-                        <p><strong>Generated on:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
-                    </div>
-                    
-                    <div class="print-report-container">
-                        <div class="section">
-                            <h2>🔍 Accessibility Analysis</h2>
-                            ${accessibilityResults}
-                        </div>
-                        
-                        <div class="section">
-                            <h2>🍪 Cookie Compliance</h2>
-                            ${cookieResults}
-                        </div>
-                    </div>
-                    
-                    <div class="print-controls">
-                        <button onclick="window.print()" style="padding: 15px 30px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px;">🖨️ Print / Save as PDF</button>
-                        <button onclick="window.close()" style="padding: 15px 30px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px;">Close Window</button>
-                    </div>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-        }
-
-        function generateAIReport() {
-            const aiResults = document.getElementById('chatgptResult').innerHTML;
-            const question = document.getElementById('chatgptQuestion').value;
-            
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>AI Assistant Conversation Report</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
-                        .print-report-container { border: 3px solid #10A37F !important; padding: 30px; margin: 20px 0; background: white; border-radius: 10px; }
-                        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
-                        .section { margin-bottom: 40px; }
-                        .question { background: #f0f9f4; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-                        @media print { button { display: none; } body { margin: 20px; } .print-report-container { border: 3px solid #10A37F !important; } }
-                        .print-controls { text-align: center; margin: 30px 0; padding: 20px; background: #f5f5f5; }
-                    </style>
-                </head>
-                </html>
