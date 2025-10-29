@@ -501,12 +501,12 @@
 
     <script>
         // ====== YOUR VERCEL BACKEND API FUNCTIONS ======
-        async function getAIReply(message) {
+        async function fetchChatGPTResult(prompt) {
             try {
-                const response = await fetch("/api/chat", {
+                const response = await fetch("/api/chatgpt", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ message })
+                    body: JSON.stringify({ prompt: prompt })
                 });
                 
                 if (!response.ok) {
@@ -514,20 +514,31 @@
                 }
                 
                 const data = await response.json();
-                return data.reply || "No response from AI service.";
+                return data.result || "No response from ChatGPT.";
             } catch (err) {
-                console.error("AI API error:", err);
-                return "Error contacting AI service. Please check your backend configuration.";
+                console.error("ChatGPT API error:", err);
+                return "Error contacting ChatGPT service.";
             }
         }
 
-        // Unified functions for both AI services
         async function fetchGeminiResult(prompt) {
-            return await getAIReply(prompt);
-        }
-
-        async function fetchChatGPTResult(prompt) {
-            return await getAIReply(prompt);
+            try {
+                const response = await fetch("/api/gemini", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                return data.result || "No response from Gemini.";
+            } catch (err) {
+                console.error("Gemini API error:", err);
+                return "Error contacting Gemini service.";
+            }
         }
 
         // State compliance laws data
@@ -657,7 +668,8 @@
             resultDiv.innerHTML = `<div class="loading">💭 AI Assistant is thinking...</div>`;
 
             try {
-                const response = await getAIReply(question);
+                // Use ChatGPT for the AI Assistant
+                const response = await fetchChatGPTResult(question);
                 
                 resultDiv.className = "pass";
                 resultDiv.classList.add('expanded');
@@ -708,10 +720,10 @@ ${response}
 Be thorough and professional in your assessment.`;
 
             try {
-                return await getAIReply(prompt);
+                return await fetchChatGPTResult(prompt);
             } catch (error) {
-                console.error("AI Error:", error);
-                return `❌ AI Service Error: ${error.message}\n\nPlease check your Vercel backend configuration.`;
+                console.error("ChatGPT Error:", error);
+                return `❌ ChatGPT Service Error: ${error.message}\n\nPlease check your Vercel backend configuration.`;
             }
         }
 
@@ -740,10 +752,10 @@ Be thorough and professional in your assessment.`;
 Format your response in a clear, structured way.`;
 
             try {
-                return await getAIReply(prompt);
+                return await fetchGeminiResult(prompt);
             } catch (error) {
-                console.error("AI Error:", error);
-                return `❌ AI Service Error: ${error.message}\n\nPlease check your Vercel backend configuration.`;
+                console.error("Gemini Error:", error);
+                return `❌ Gemini Service Error: ${error.message}\n\nPlease check your Vercel backend configuration.`;
             }
         }
 
