@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Private Testing Platform</title>
+    <title>Private Testing cookie accessibility</title>
     <style>
         #publicContent {
             text-align: center;
@@ -338,6 +338,12 @@
             color: #004085;
             border: 1px solid #b3d7ff;
         }
+        
+        .api-status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
     </style>
 </head>
 <body>
@@ -508,6 +514,12 @@
             <h3>AI Assistant Response <small>(Expandable - Up to 1000 words)</small></h3>
             <div id="chatgptResult" class="chatgpt-response-container">Ask a question to see AI response here...</div>
         </div>
+
+        <!-- API Setup Instructions -->
+        <div class="results" id="setupInstructions" style="display: none;">
+            <h3>🚨 API Setup Required</h3>
+            <div id="setupContent"></div>
+        </div>
     </div>
 
     <script>
@@ -555,9 +567,9 @@
             washington: { cookie: "Washington My Health My Data Act", accessibility: "Washington Law Against Discrimination" }
         };
 
-        // API Configuration - UPDATE THIS WITH YOUR VERCEL DOMAIN
+        // API Configuration
         const API_CONFIG = {
-            baseURL: 'https://access-coo-ws.vercel.app', // ⚠️ Your Vercel domain
+            baseURL: 'https://access-coo-ws.vercel.app',
             endpoints: {
                 gemini: '/api/gemini',
                 chatgpt: '/api/chatgpt',
@@ -574,7 +586,7 @@
             selectAI('gemini');
         });
 
-        // Test API connection
+        // Improved API connection test
         async function checkAPIConnection() {
             const statusElement = document.getElementById('apiStatus');
             
@@ -582,35 +594,134 @@
                 statusElement.innerHTML = '🔄 Testing API connection to Vercel...';
                 statusElement.className = 'api-status testing';
                 
-                // Test the API endpoint
-                const response = await fetch(`${API_CONFIG.baseURL}${API_CONFIG.endpoints.test}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ test: 'connection_test' })
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
+                // Test multiple endpoints to see what's available
+                const endpointsToTest = ['/api/gemini', '/api/chatgpt', '/api/test'];
+                let availableEndpoints = [];
+                
+                for (const endpoint of endpointsToTest) {
+                    try {
+                        const response = await fetch(`${API_CONFIG.baseURL}${endpoint}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ test: true })
+                        });
+                        
+                        if (response.ok) {
+                            availableEndpoints.push(endpoint);
+                        }
+                    } catch (e) {
+                        // Endpoint not available, continue testing others
+                    }
+                }
+                
+                if (availableEndpoints.length > 0) {
                     apiConnected = true;
-                    statusElement.innerHTML = '✅ API Connected Successfully! Vercel endpoints are ready.';
+                    statusElement.innerHTML = `✅ API Connected! Available endpoints: ${availableEndpoints.join(', ')}`;
                     statusElement.className = 'api-status connected';
+                    document.getElementById('setupInstructions').style.display = 'none';
                 } else {
-                    throw new Error(`HTTP ${response.status} - API endpoint not reachable`);
+                    // No endpoints found, show setup instructions
+                    apiConnected = false;
+                    statusElement.innerHTML = '⚠️ API Routes Not Found';
+                    statusElement.className = 'api-status warning';
+                    showSetupInstructions();
                 }
                 
             } catch (error) {
                 apiConnected = false;
-                statusElement.innerHTML = `❌ API Connection Failed: ${error.message}<br>
-                    <small>Please ensure:<br>
-                    • API routes are deployed to Vercel<br>
-                    • CORS is configured in API files<br>
-                    • Domain is correct in API_CONFIG</small>`;
+                statusElement.innerHTML = `❌ Connection Failed: ${error.message}`;
                 statusElement.className = 'api-status error';
-                
-                console.error('API Connection Error:', error);
+                showSetupInstructions();
             }
+        }
+
+        // Show setup instructions when APIs are missing
+        function showSetupInstructions() {
+            const setupDiv = document.getElementById('setupInstructions');
+            const setupContent = document.getElementById('setupContent');
+            
+            setupContent.innerHTML = `
+                <p><strong>To fix this, you need to create these API files in your Vercel project:</strong></p>
+                
+                <h4>1. Create /api/gemini.js:</h4>
+                <pre><code>export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  
+  try {
+    const { prompt } = req.body;
+    if (!process.env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY not configured');
+    
+    const response = await fetch(\`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=\${process.env.GEMINI_API_KEY}\`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    });
+    
+    const data = await response.json();
+    const result = data.candidates[0].content.parts[0].text;
+    
+    res.status(200).json({ response: result, message: 'Success' });
+  } catch (error) {
+    res.status(500).json({ error: \`Gemini API Error: \${error.message}\` });
+  }
+}</code></pre>
+                
+                <h4>2. Create /api/chatgpt.js:</h4>
+                <pre><code>export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  
+  try {
+    const { prompt } = req.body;
+    if (!process.env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY not configured');
+    
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': \`Bearer \${process.env.OPENAI_API_KEY}\`
+      },
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 1000
+      })
+    });
+    
+    const data = await response.json();
+    const result = data.choices[0].message.content;
+    
+    res.status(200).json({ response: result, message: 'Success' });
+  } catch (error) {
+    res.status(500).json({ error: \`ChatGPT API Error: \${error.message}\` });
+  }
+}</code></pre>
+                
+                <h4>3. Set Environment Variables in Vercel:</h4>
+                <ul>
+                    <li><code>GEMINI_API_KEY</code> = your_gemini_api_key</li>
+                    <li><code>OPENAI_API_KEY</code> = your_openai_api_key</li>
+                </ul>
+                
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>Create an <code>/api</code> folder in your GitHub repository</li>
+                    <li>Add the two API files above</li>
+                    <li>Set environment variables in Vercel dashboard</li>
+                    <li>Vercel will auto-deploy when you push to GitHub</li>
+                </ol>
+            `;
+            
+            setupDiv.style.display = 'block';
         }
 
         function smoothScrollToElement(elementId) {
@@ -646,7 +757,6 @@
             currentAIDiv.style.display = 'block';
         }
 
-        // Word count for question input
         document.getElementById('chatgptQuestion').addEventListener('input', function() {
             const text = this.value;
             const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
@@ -664,53 +774,31 @@
             }
         });
 
-        // Main API call function - FIXED for Vercel
         async function callAPI(endpoint, data) {
             if (!apiConnected) {
-                throw new Error('API not connected. Please check the API status above and ensure your Vercel API routes are deployed.');
+                throw new Error('API routes not deployed. Please check the setup instructions above.');
             }
 
             try {
                 const endpointPath = API_CONFIG.endpoints[endpoint];
                 const fullURL = `${API_CONFIG.baseURL}${endpointPath}`;
                 
-                console.log('Calling API:', fullURL, data);
-
                 const response = await fetch(fullURL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    throw new Error(`HTTP ${response.status}: API endpoint not available`);
                 }
 
-                const result = await response.json();
-                return result;
+                return await response.json();
             } catch (error) {
-                console.error(`API Error (${endpoint}):`, error);
-                
-                // Provide helpful error messages
-                if (error.message.includes('Failed to fetch')) {
-                    throw new Error('Network error: Cannot connect to Vercel API server. Check your domain in API_CONFIG.');
-                }
-                if (error.message.includes('404')) {
-                    throw new Error('API endpoint not found. Make sure your API routes are deployed to Vercel.');
-                }
-                if (error.message.includes('500')) {
-                    throw new Error('Server error in Vercel API. Check your API route code and environment variables.');
-                }
-                
                 throw new Error(`API call failed: ${error.message}`);
             }
         }
 
-        // Test with AI function
         async function testWithAI(url, type) {
             const state = document.getElementById('stateSelect').value;
             let stateSpecificInfo = '';
@@ -724,64 +812,39 @@
             const prompt = `Analyze the website ${url} for ${type}. ${stateSpecificInfo}\n\nProvide a detailed analysis including:\n1. Overall compliance score (out of 100)\n2. Key findings\n3. Specific issues detected\n4. Recommendations for improvement\n5. State-specific compliance notes if applicable`;
 
             try {
-                const result = await callAPI(currentAI, { 
-                    prompt: prompt,
-                    type: type,
-                    url: url,
-                    state: state
-                });
-                
+                const result = await callAPI(currentAI, { prompt, type, url, state });
                 return result.response || result.message || 'Analysis completed successfully';
             } catch (error) {
                 throw new Error(`Failed to get AI analysis: ${error.message}`);
             }
         }
 
-        // Ask AI function
         async function askAI() {
             const question = document.getElementById('chatgptQuestion').value.trim();
+            if (!question) return alert("Please enter a question!");
             
-            if (!question) {
-                alert("Please enter a question for the AI Assistant!");
-                return;
-            }
-
             const words = question.trim().split(/\s+/).length;
-            if (words > 300) {
-                alert("Please keep your question under 300 words!");
-                return;
-            }
+            if (words > 300) return alert("Please keep your question under 300 words!");
 
             const resultDiv = document.getElementById('chatgptResult');
             resultDiv.innerHTML = `<div class="loading">💭 ${currentAI === 'gemini' ? 'Gemini' : 'ChatGPT'} is thinking...</div>`;
 
             try {
-                const result = await callAPI(currentAI, { 
-                    prompt: question,
-                    type: 'general',
-                    conversational: true
-                });
-
+                const result = await callAPI(currentAI, { prompt: question, type: 'general', conversational: true });
                 resultDiv.className = "pass chatgpt-response-container expanded";
                 resultDiv.innerHTML = `<strong>🤖 ${currentAI === 'gemini' ? 'Gemini' : 'ChatGPT'} Response:</strong>\n\n${result.response || result.message}`;
-                
-                setTimeout(() => {
-                    smoothScrollToElement('chatgptResultContainer');
-                }, 500);
-                
+                setTimeout(() => smoothScrollToElement('chatgptResultContainer'), 500);
             } catch (error) {
                 resultDiv.className = "fail chatgpt-response-container";
-                resultDiv.innerHTML = `❌ Error: ${error.message}\n\nTroubleshooting:\n• Check API_CONFIG baseURL is correct\n• Verify Vercel deployment\n• Check browser console for details`;
+                resultDiv.innerHTML = `❌ Error: ${error.message}`;
             }
         }
 
-        // Cookie compliance test
         document.getElementById("testCookieBtn").addEventListener("click", async () => {
             const url = document.getElementById("websiteInput").value.trim();
             const state = document.getElementById('stateSelect').value;
-            
             if (!url) return alert("Please enter a website URL.");
-            if (!state) return alert("Please select a state for compliance testing.");
+            if (!state) return alert("Please select a state.");
 
             const resultDiv = document.getElementById("cookieResult");
             const stateName = document.getElementById('stateSelect').selectedOptions[0].text;
@@ -789,27 +852,20 @@
 
             try {
                 const result = await testWithAI(url, "cookie compliance");
-                
                 resultDiv.className = "pass";
                 resultDiv.innerHTML = result;
-                
-                setTimeout(() => {
-                    smoothScrollToElement('cookieResultContainer');
-                }, 500);
-                
+                setTimeout(() => smoothScrollToElement('cookieResultContainer'), 500);
             } catch (error) {
                 resultDiv.className = "fail";
-                resultDiv.innerHTML = `❌ Error: ${error.message}\n\nPlease check:\n• Vercel API routes are deployed\n• Environment variables are set\n• API_CONFIG domain is correct`;
+                resultDiv.innerHTML = `❌ Error: ${error.message}`;
             }
         });
 
-        // Accessibility test
         document.getElementById("testAccessibilityBtn").addEventListener("click", async () => {
             const url = document.getElementById("websiteInput").value.trim();
             const state = document.getElementById('stateSelect').value;
-            
             if (!url) return alert("Please enter a website URL.");
-            if (!state) return alert("Please select a state for compliance testing.");
+            if (!state) return alert("Please select a state.");
 
             const resultDiv = document.getElementById("accessibilityResult");
             const stateName = document.getElementById('stateSelect').selectedOptions[0].text;
@@ -817,21 +873,15 @@
 
             try {
                 const result = await testWithAI(url, "accessibility");
-                
                 resultDiv.className = "pass";
                 resultDiv.innerHTML = result;
-                
-                setTimeout(() => {
-                    smoothScrollToElement('accessibilityResultContainer');
-                }, 500);
-                
+                setTimeout(() => smoothScrollToElement('accessibilityResultContainer'), 500);
             } catch (error) {
                 resultDiv.className = "fail";
-                resultDiv.innerHTML = `❌ Error: ${error.message}\n\nPlease check:\n• Vercel API routes are deployed\n• Environment variables are set\n• API_CONFIG domain is correct`;
+                resultDiv.innerHTML = `❌ Error: ${error.message}`;
             }
         });
 
-        // Generate compliance report
         function generateReport() {
             const accessibilityResults = document.getElementById('accessibilityResult').innerHTML;
             const cookieResults = document.getElementById('cookieResult').innerHTML;
@@ -884,7 +934,6 @@
             printWindow.document.close();
         }
 
-        // Generate AI report
         function generateAIReport() {
             const aiResults = document.getElementById('chatgptResult').innerHTML;
             const question = document.getElementById('chatgptQuestion').value;
@@ -933,7 +982,7 @@
             printWindow.document.close();
         }
 
-        // Secret access functionality
+        // Secret access functionality - WITH CURSOR FIX 💕
         let clickCount = 0;
         const requiredClicks = 7;
         const correctPassword = "333";
@@ -950,6 +999,11 @@
             if (clickCount >= requiredClicks) {
                 document.getElementById('passwordModal').style.display = 'flex';
                 clickCount = 0;
+                
+                // 💕 CURSOR FIX: Focus on password input after modal appears
+                setTimeout(() => {
+                    document.getElementById('passwordInput').focus();
+                }, 100);
             }
         });
 
@@ -966,6 +1020,12 @@
             } else {
                 errorElement.style.display = 'block';
                 document.getElementById('passwordInput').value = '';
+                
+                // 💕 CURSOR FIX: Refocus on password input after wrong password
+                setTimeout(() => {
+                    document.getElementById('passwordInput').focus();
+                }, 100);
+                
                 setTimeout(() => errorElement.style.display = 'none', 3000);
             }
         }
