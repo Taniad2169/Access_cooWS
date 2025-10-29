@@ -103,46 +103,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        .ai-toggle {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
-        }
-
-        .toggle-option {
-            padding: 12px 30px;
-            margin: 0 10px;
-            border: 2px solid #007bff;
-            border-radius: 25px;
-            cursor: pointer;
-            background: white;
-            color: #007bff;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-option.active {
-            background: #007bff;
-            color: white;
-        }
-
-        .toggle-option:hover {
-            transform: scale(1.05);
-        }
-
-        .toggle-option.gemini.active {
-            background: #8B5CF6;
-            border-color: #8B5CF6;
-        }
-
-        .toggle-option.chatgpt.active {
-            background: #10A37F;
-            border-color: #10A37F;
-        }
+        /* Removed .ai-toggle CSS */
 
         #cookieResult, #accessibilityResult {
             border: 1px solid #ccc;
@@ -246,19 +207,18 @@
             font-weight: bold;
             margin: 10px 0;
             padding: 10px;
-            background: linear-gradient(45deg, #007bff, #8B5CF6);
+            background: #10A37F; /* Set to ChatGPT color */
             color: white;
             border-radius: 5px;
-            display: none;
         }
 
         .loading {
-            color: #007bff;
+            color: #10A37F; /* Set to ChatGPT color */
             font-style: italic;
         }
 
         .section-title {
-            background: linear-gradient(45deg, #10A37F, #8B5CF6);
+            background: #10A37F; /* Set to ChatGPT color */
             color: white;
             padding: 15px;
             border-radius: 8px;
@@ -378,7 +338,7 @@
         <p>Welcome back, my love! Ready to run some tests? 💕</p>
         
         <div class="demo-notice">
-            <strong>✅ Live Mode:</strong> Connected to AI services via secure Vercel API endpoints!
+            <strong>✅ Live Mode:</strong> Connected to AI service via secure Vercel API endpoint!
         </div>
 
         <div id="apiStatus" class="api-status testing">
@@ -422,7 +382,7 @@
                 <option value="massachusetts">Massachusetts</option>
                 <option value="michigan">Michigan</option>
                 <option value="minnesota">Minnesota</option>
-                <option value="mississippi">Mississippi</option>
+                <option value="mississippi">Mississippi</mississippi>
                 <option value="missouri">Missouri</option>
                 <option value="montana">Montana</option>
                 <option value="nebraska">Nebraska</option>
@@ -444,17 +404,8 @@
             </select>
         </div>
         
-        <div class="ai-toggle">
-            <div class="toggle-option gemini active" onclick="selectAI('gemini')">
-                🔮 Gemini AI
-            </div>
-            <div class="toggle-option chatgpt" onclick="selectAI('chatgpt')">
-                🤖 ChatGPT
-            </div>
-        </div>
-
         <div class="current-ai" id="currentAI">
-            Currently using: <span id="aiName">Gemini AI</span>
+            Currently using: <span id="aiName">ChatGPT</span>
         </div>
         
         <div style="text-align: center; margin: 20px 0;">
@@ -555,25 +506,24 @@
             washington: { cookie: "Washington My Health My Data Act", accessibility: "Washington Law Against Discrimination" }
         };
 
-        // API Configuration
+        // API Configuration (Only ChatGPT endpoint needed)
         const API_CONFIG = {
             baseURL: 'https://access-coo-ws.vercel.app',
             endpoints: {
-                gemini: '/api/gemini',
                 chatgpt: '/api/chatgpt'
             }
         };
 
-        let currentAI = 'gemini';
+        let currentAI = 'chatgpt'; // Fixed to chatgpt
         let apiConnected = false;
 
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
             checkAPIConnection();
-            selectAI('gemini');
+            document.getElementById('aiName').textContent = 'ChatGPT';
         });
 
-        // 💕 ADDED: API Connection Test Function
+        // ✅ FIX: API Connection Test Function - sends empty prompt
         async function checkAPIConnection() {
             const statusElement = document.getElementById('apiStatus');
             
@@ -581,14 +531,16 @@
                 statusElement.innerHTML = '🔄 Testing API connection...';
                 statusElement.className = 'api-status testing';
                 
-                // Test the current AI endpoint
-                const endpoint = currentAI === 'gemini' ? API_CONFIG.endpoints.gemini : API_CONFIG.endpoints.chatgpt;
-                const response = await fetch(`${API_CONFIG.baseURL}${endpoint}`, {
+                // Use the correct endpoint for ChatGPT
+                const endpointPath = API_CONFIG.endpoints.chatgpt;
+                
+                // ✅ FIX: Send a valid prompt (even if empty) to satisfy backend validation
+                const response = await fetch(`${API_CONFIG.baseURL}${endpointPath}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ test: true })
+                    body: JSON.stringify({ prompt: "Test connection" }) 
                 });
 
                 if (response.ok) {
@@ -597,6 +549,7 @@
                     statusElement.innerHTML = '✅ API Connected Successfully!';
                     statusElement.className = 'api-status connected';
                 } else {
+                    // Still throw an error if status is not 200-299
                     throw new Error(`HTTP ${response.status}`);
                 }
                 
@@ -621,27 +574,7 @@
             }
         }
 
-        function selectAI(ai) {
-            currentAI = ai;
-            
-            document.querySelectorAll('.toggle-option').forEach(option => {
-                option.classList.remove('active');
-            });
-            
-            if (ai === 'gemini') {
-                document.querySelector('.toggle-option.gemini').classList.add('active');
-                document.getElementById('aiName').textContent = 'Gemini AI';
-            } else {
-                document.querySelector('.toggle-option.chatgpt').classList.add('active');
-                document.getElementById('aiName').textContent = 'ChatGPT';
-            }
-            
-            const currentAIDiv = document.getElementById('currentAI');
-            currentAIDiv.style.display = 'block';
-            
-            // Re-check API connection when switching AI
-            checkAPIConnection();
-        }
+        // Removed selectAI function
 
         document.getElementById('chatgptQuestion').addEventListener('input', function() {
             const text = this.value;
@@ -660,14 +593,15 @@
             }
         });
 
-        // 💕 ADDED: Main API Call Function
+        // 💕 ADDED: Main API Call Function - simplified for ChatGPT
         async function callAPI(endpoint, data) {
             if (!apiConnected) {
                 throw new Error('API not connected. Please check the API status above.');
             }
 
             try {
-                const endpointPath = currentAI === 'gemini' ? API_CONFIG.endpoints.gemini : API_CONFIG.endpoints.chatgpt;
+                // Endpoint is fixed to chatgpt
+                const endpointPath = API_CONFIG.endpoints.chatgpt; 
                 const fullURL = `${API_CONFIG.baseURL}${endpointPath}`;
                 
                 const response = await fetch(fullURL, {
@@ -675,12 +609,20 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify(data) // data must contain { prompt: "..." }
                 });
 
                 if (!response.ok) {
                     const errorText = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    // Attempt to parse JSON error if available, otherwise use text
+                    let errorMessage = errorText;
+                    try {
+                        const errorJson = JSON.parse(errorText);
+                        errorMessage = errorJson.error || errorText;
+                    } catch (e) {
+                        // Ignore JSON parse error and use raw text
+                    }
+                    throw new Error(`HTTP ${response.status}: ${errorMessage}`);
                 }
 
                 const result = await response.json();
@@ -733,7 +675,8 @@ Provide a detailed analysis including:
 5. State-specific compliance notes if applicable`;
 
             try {
-                const result = await callAPI(currentAI, { 
+                // Fixed: endpoint name to chatgpt
+                const result = await callAPI('chatgpt', { 
                     prompt: prompt,
                     type: type,
                     url: url,
@@ -761,17 +704,18 @@ Provide a detailed analysis including:
             }
 
             const resultDiv = document.getElementById('chatgptResult');
-            resultDiv.innerHTML = `<div class="loading">💭 ${currentAI === 'gemini' ? 'Gemini' : 'ChatGPT'} is thinking...</div>`;
+            resultDiv.innerHTML = `<div class="loading">💭 ChatGPT is thinking...</div>`;
 
             try {
-                const result = await callAPI(currentAI, { 
+                // Fixed: endpoint name to chatgpt
+                const result = await callAPI('chatgpt', { 
                     prompt: question,
                     type: 'general',
                     conversational: true
                 });
 
                 resultDiv.className = "pass chatgpt-response-container expanded";
-                resultDiv.innerHTML = `<strong>🤖 ${currentAI === 'gemini' ? 'Gemini' : 'ChatGPT'} Response:</strong>\n\n${result.response || result.message}`;
+                resultDiv.innerHTML = `<strong>🤖 ChatGPT Response:</strong>\n\n${result.response || result.message}`;
                 
                 setTimeout(() => {
                     smoothScrollToElement('chatgptResultContainer');
@@ -792,7 +736,7 @@ Provide a detailed analysis including:
 
             const resultDiv = document.getElementById("cookieResult");
             const stateName = document.getElementById('stateSelect').selectedOptions[0].text;
-            resultDiv.innerHTML = `<div class="loading">🔄 Testing Cookie Compliance for ${stateName} with ${currentAI === 'gemini' ? 'Gemini...' : 'ChatGPT...'}</div>`;
+            resultDiv.innerHTML = `<div class="loading">🔄 Testing Cookie Compliance for ${stateName} with ChatGPT...</div>`;
 
             try {
                 const result = await testWithAI(url, "cookie compliance");
@@ -819,7 +763,7 @@ Provide a detailed analysis including:
 
             const resultDiv = document.getElementById("accessibilityResult");
             const stateName = document.getElementById('stateSelect').selectedOptions[0].text;
-            resultDiv.innerHTML = `<div class="loading">🔄 Testing Accessibility for ${stateName} with ${currentAI === 'gemini' ? 'Gemini...' : 'ChatGPT...'}</div>`;
+            resultDiv.innerHTML = `<div class="loading">🔄 Testing Accessibility for ${stateName} with ChatGPT...</div>`;
 
             try {
                 const result = await testWithAI(url, "accessibility");
@@ -863,7 +807,7 @@ Provide a detailed analysis including:
                         <h1>📊 Website Compliance Report</h1>
                         <p><strong>Website:</strong> ${websiteUrl}</p>
                         <p><strong>State:</strong> ${stateName}</p>
-                        <p><strong>AI Used:</strong> ${currentAI === 'gemini' ? 'Gemini AI' : 'ChatGPT'}</p>
+                        <p><strong>AI Used:</strong> ChatGPT</p>
                         <p><strong>Generated on:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
                     </div>
                     
@@ -970,7 +914,6 @@ Provide a detailed analysis including:
                 document.getElementById('publicContent').style.display = 'none';
                 document.getElementById('testingPlatform').style.display = 'block';
                 document.getElementById('secretTarget').style.display = 'none';
-                selectAI('gemini');
             } else {
                 errorElement.style.display = 'block';
                 document.getElementById('passwordInput').value = '';
