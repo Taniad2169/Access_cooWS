@@ -72,10 +72,24 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         
         .print-button {
             background: #28a745;
+        }
+        
+        .chatgpt-button {
+            background: #10A37F;
+        }
+
+        .web-chatgpt-button {
+            background: #FF6B35;
         }
         
         .results {
@@ -84,6 +98,231 @@
             margin: 15px 0;
             border-radius: 5px;
             border-left: 4px solid #007bff;
+            transition: all 0.3s ease;
+        }
+
+        /* Highlight result container when scrolled to */
+        .results.highlight {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* AI Toggle Switch */
+        .ai-toggle {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+
+        .toggle-option {
+            padding: 12px 30px;
+            margin: 0 10px;
+            border: 2px solid #007bff;
+            border-radius: 25px;
+            cursor: pointer;
+            background: white;
+            color: #007bff;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-option.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .toggle-option:hover {
+            transform: scale(1.05);
+        }
+
+        /* Gemini Style */
+        .toggle-option.gemini.active {
+            background: #8B5CF6;
+            border-color: #8B5CF6;
+        }
+
+        /* ChatGPT Style */
+        .toggle-option.chatgpt.active {
+            background: #10A37F;
+            border-color: #10A37F;
+        }
+
+        /* Result containers styling */
+        #cookieResult, #accessibilityResult {
+            border: 1px solid #ccc;
+            padding: 12px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            min-height: 100px;
+            line-height: 1.5;
+        }
+
+        /* ChatGPT Result Container - Expandable */
+        #chatgptResult {
+            border: 1px solid #10A37F;
+            padding: 20px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: Arial, sans-serif;
+            background-color: #f0f9f4;
+            min-height: 150px;
+            line-height: 1.6;
+            border-radius: 8px;
+            resize: vertical;
+            overflow: auto;
+            max-height: none;
+            transition: all 0.3s ease;
+        }
+
+        #chatgptResult.expanded {
+            min-height: 300px;
+            background: #e8f5e8;
+        }
+
+        #cookieResult.fail, #accessibilityResult.fail, #chatgptResult.fail {
+            border-color: red;
+            color: red;
+        }
+
+        #cookieResult.pass, #accessibilityResult.pass, #chatgptResult.pass {
+            border-color: green;
+            color: green;
+        }
+
+        /* Print report container with red border */
+        .print-report-container {
+            border: 3px solid red !important;
+            padding: 20px;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+        }
+
+        /* Website input */
+        #websiteInput {
+            width: 70%; 
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        /* State dropdown */
+        #stateSelect {
+            width: 200px;
+            padding: 12px;
+            margin: 10px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            font-size: 16px;
+            background: white;
+        }
+
+        /* ChatGPT input - 300 words */
+        #chatgptQuestion {
+            width: 90%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #10A37F;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+            resize: vertical;
+            min-height: 120px;
+            max-height: 200px;
+        }
+
+        /* ChatGPT response container - 1000 words capacity */
+        .chatgpt-response-container {
+            min-height: 200px;
+            max-height: none;
+            resize: vertical;
+            overflow: auto;
+        }
+
+        .word-count {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            margin-top: -5px;
+            margin-bottom: 10px;
+        }
+
+        /* Current AI indicator */
+        .current-ai {
+            text-align: center;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            background: linear-gradient(45deg, #007bff, #8B5CF6);
+            color: white;
+            border-radius: 5px;
+            display: none;
+        }
+
+        /* Loading spinner */
+        .loading {
+            color: #007bff;
+            font-style: italic;
+        }
+
+        /* Section styling */
+        .section-title {
+            background: linear-gradient(45deg, #10A37F, #8B5CF6);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 25px 0 15px 0;
+            text-align: center;
+        }
+
+        .state-compliance {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 25px 0 15px 0;
+            text-align: center;
+        }
+
+        .form-group {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Button container */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Target for scrolling */
+        .scroll-target {
+            scroll-margin-top: 20px;
         }
     </style>
 </head>
@@ -121,7 +360,6 @@
     <div id="publicContent">
         <h1>Welcome to Our Website</h1>
         <p>This is a public website. Nothing to see here for regular visitors.</p>
-        <p>👆 Look for the secret target in the top-right corner if you're me!</p>
     </div>
 
     <!-- 🛡️ Private Testing Platform (hidden until login) -->
@@ -129,122 +367,475 @@
         <h1>🛡️ Your Private Testing Platform</h1>
         <p>Welcome back, my love! Ready to run some tests? 💕</p>
         
+        <!-- State Compliance Section -->
+        <div class="state-compliance">
+            <h2>🏛️ State Compliance Testing</h2>
+        </div>
+
+        <div class="form-group">
+            <label for="stateSelect">Select State for Compliance Analysis:</label>
+            <select id="stateSelect">
+                <option value="">-- Select a State --</option>
+                <option value="california">California</option>
+                <option value="newyork">New York</option>
+                <option value="florida">Florida</option>
+                <option value="texas">Texas</option>
+                <option value="georgia">Georgia</option>
+                <option value="northcarolina">North Carolina</option>
+                <option value="southcarolina">South Carolina</option>
+                <option value="utah">Utah</option>
+                <option value="virginia">Virginia</option>
+                <option value="alabama">Alabama</option>
+                <option value="alaska">Alaska</option>
+                <option value="arizona">Arizona</option>
+                <option value="arkansas">Arkansas</option>
+                <option value="colorado">Colorado</option>
+                <option value="connecticut">Connecticut</option>
+                <option value="delaware">Delaware</option>
+                <option value="hawaii">Hawaii</option>
+                <option value="idaho">Idaho</option>
+                <option value="illinois">Illinois</option>
+                <option value="indiana">Indiana</option>
+                <option value="iowa">Iowa</option>
+                <option value="kansas">Kansas</option>
+                <option value="kentucky">Kentucky</option>
+                <option value="louisiana">Louisiana</option>
+                <option value="maine">Maine</option>
+                <option value="maryland">Maryland</option>
+                <option value="massachusetts">Massachusetts</option>
+                <option value="michigan">Michigan</option>
+                <option value="minnesota">Minnesota</option>
+                <option value="mississippi">Mississippi</option>
+                <option value="missouri">Missouri</option>
+                <option value="montana">Montana</option>
+                <option value="nebraska">Nebraska</option>
+                <option value="nevada">Nevada</option>
+                <option value="newhampshire">New Hampshire</option>
+                <option value="newjersey">New Jersey</option>
+                <option value="newmexico">New Mexico</option>
+                <option value="ohio">Ohio</option>
+                <option value="oklahoma">Oklahoma</option>
+                <option value="oregon">Oregon</option>
+                <option value="pennsylvania">Pennsylvania</option>
+                <option value="rhodeisland">Rhode Island</option>
+                <option value="tennessee">Tennessee</option>
+                <option value="vermont">Vermont</option>
+                <option value="washington">Washington</option>
+                <option value="westvirginia">West Virginia</option>
+                <option value="wisconsin">Wisconsin</option>
+                <option value="wyoming">Wyoming</option>
+            </select>
+        </div>
+        
+        <!-- AI Toggle Switch -->
+        <div class="ai-toggle">
+            <div class="toggle-option gemini active" onclick="selectAI('gemini')">
+                🔮 Gemini AI
+            </div>
+            <div class="toggle-option chatgpt" onclick="selectAI('chatgpt')">
+                🤖 ChatGPT
+            </div>
+        </div>
+
+        <!-- Current AI Indicator -->
+        <div class="current-ai" id="currentAI">
+            Currently using: <span id="aiName">Gemini AI</span>
+        </div>
+        
+        <!-- Website Input -->
+        <div style="text-align: center; margin: 20px 0;">
+            <input type="text" id="websiteInput" placeholder="https://www.example.com" value="https://www.thewebswan.com">
+        </div>
+        
         <!-- Test Controls -->
-        <div>
-            <button class="test-button" onclick="testAccessibility()">🔍 Test Accessibility</button>
-            <button class="test-button" onclick="testCookies()">🍪 Test Cookie Compliance</button>
-            <button class="test-button print-button" onclick="generateReport()">📄 Generate & Print Report</button>
+        <div class="button-group">
+            <button class="test-button" id="testCookieBtn">🍪 Test Cookie Compliance</button>
+            <button class="test-button" id="testAccessibilityBtn">🔍 Test Accessibility</button>
+            <button class="test-button print-button" onclick="generateReport()">📄 Generate Report</button>
         </div>
         
         <!-- Results Areas -->
-        <div id="accessibilityResults" class="results">
-            <h3>Accessibility Results</h3>
-            <p>Run the test to see results here...</p>
+        <div class="results scroll-target" id="cookieResultContainer">
+            <h3>Cookie Compliance Results</h3>
+            <div id="cookieResult">Select a state and run the cookie test to see results here...</div>
         </div>
         
-        <div id="cookieResults" class="results">
-            <h3>Cookie Compliance Results</h3>
-            <p>Run the test to see results here...</p>
+        <div class="results scroll-target" id="accessibilityResultContainer">
+            <h3>Accessibility Results</h3>
+            <div id="accessibilityResult">Select a state and run the accessibility test to see results here...</div>
+        </div>
+
+        <!-- 💬 Regular ChatGPT Section -->
+        <div class="section-title">
+            <h2>💬 AI Assistant - Ask Me Anything</h2>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <textarea 
+                id="chatgptQuestion" 
+                placeholder="Type your question here... (up to 300 words)"
+                maxlength="1500"
+            ></textarea>
+            <div class="word-count">
+                <span id="wordCount">0</span>/300 words
+                <span id="charCount">0</span>/1500 characters
+            </div>
+            <div class="button-group">
+                <button class="test-button chatgpt-button" onclick="askAI()">
+                    🚀 Ask AI Assistant
+                </button>
+                <button class="test-button web-chatgpt-button" onclick="window.open('https://chat.openai.com/', '_blank')">
+                    🌐 Web ChatGPT
+                </button>
+                <button class="test-button print-button" onclick="generateAIReport()">
+                    📄 Print Response
+                </button>
+            </div>
+        </div>
+
+        <div class="results scroll-target" id="chatgptResultContainer">
+            <h3>AI Assistant Response <small>(Expandable - Up to 1000 words)</small></h3>
+            <div id="chatgptResult" class="chatgpt-response-container">Ask a question to see AI response here...</div>
         </div>
     </div>
 
     <script>
-        // 🔐 Secret Login System
-        let clickCount = 0;
-        const requiredClicks = 7;
-        const correctPassword = "333";
-
-        // Secret target button functionality
-        document.getElementById('secretTarget').addEventListener('click', function() {
-            clickCount++;
-            
-            // Visual feedback - pulse effect
-            this.style.opacity = '0.8';
-            this.style.transform = 'scale(1.2)';
-            setTimeout(() => {
-                this.style.opacity = '0.3';
-                this.style.transform = 'scale(1)';
-            }, 200);
-            
-            console.log(`Clicks: ${clickCount}/${requiredClicks}`);
-            
-            if (clickCount >= requiredClicks) {
-                document.getElementById('passwordModal').style.display = 'flex';
-                clickCount = 0; // Reset for next time
+        // ====== YOUR VERCEL BACKEND API FUNCTIONS ======
+        async function getAIReply(message) {
+            try {
+                const response = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                return data.reply || "No response from AI service.";
+            } catch (err) {
+                console.error("AI API error:", err);
+                return "Error contacting AI service. Please check your backend configuration.";
             }
-        });
+        }
 
-        // Password check function
-        function checkPassword() {
-            const input = document.getElementById('passwordInput').value;
-            const errorElement = document.getElementById('passwordError');
-            
-            if (input === correctPassword) {
-                // Correct password - show testing platform
-                document.getElementById('passwordModal').style.display = 'none';
-                document.getElementById('publicContent').style.display = 'none';
-                document.getElementById('testingPlatform').style.display = 'block';
-                document.getElementById('secretTarget').style.display = 'none'; // Hide target after login
-            } else {
-                // Wrong password
-                errorElement.style.display = 'block';
-                document.getElementById('passwordInput').value = '';
+        // Unified functions for both AI services
+        async function fetchGeminiResult(prompt) {
+            return await getAIReply(prompt);
+        }
+
+        async function fetchChatGPTResult(prompt) {
+            return await getAIReply(prompt);
+        }
+
+        // State compliance laws data
+        const stateLaws = {
+            california: { 
+                cookie: "CCPA/CPRA - California Consumer Privacy Act", 
+                accessibility: "Unruh Civil Rights Act + WCAG 2.1 AA" 
+            },
+            newyork: { 
+                cookie: "NY SHIELD Act + Proposed Privacy Law", 
+                accessibility: "New York Human Rights Law + WCAG 2.1" 
+            },
+            florida: { 
+                cookie: "Florida Information Protection Act", 
+                accessibility: "Florida Civil Rights Act" 
+            },
+            texas: { 
+                cookie: "Texas Identity Theft Enforcement", 
+                accessibility: "Texas Human Resources Code" 
+            },
+            georgia: { 
+                cookie: "Georgia Personal Identity Protection", 
+                accessibility: "Georgia Equal Access to Services" 
+            },
+            northcarolina: { 
+                cookie: "NC Identity Theft Protection Act", 
+                accessibility: "NC Persons with Disabilities Protection" 
+            },
+            southcarolina: { 
+                cookie: "SC Insurance Data Security Act", 
+                accessibility: "SC Human Affairs Law" 
+            },
+            utah: { 
+                cookie: "Utah Consumer Privacy Act", 
+                accessibility: "Utah Antidiscrimination Act" 
+            },
+            virginia: { 
+                cookie: "VCDPA - Virginia Consumer Data Protection Act", 
+                accessibility: "Virginia Human Rights Act" 
+            },
+            colorado: { cookie: "CPA - Colorado Privacy Act", accessibility: "Colorado Anti-Discrimination Act" },
+            connecticut: { cookie: "CTDPA - Connecticut Data Privacy Act", accessibility: "Connecticut Human Rights Law" },
+            illinois: { cookie: "BIPA - Biometric Information Privacy Act", accessibility: "Illinois Human Rights Act" },
+            nevada: { cookie: "Nevada Privacy Law", accessibility: "Nevada Equal Rights Commission" },
+            washington: { cookie: "Washington My Health My Data Act", accessibility: "Washington Law Against Discrimination" }
+        };
+
+        // ====== SMOOTH SCROLL FUNCTION ======
+        function smoothScrollToElement(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                // Add highlight class
+                element.classList.add('highlight');
+                
+                // Smooth scroll to element
+                element.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center'
+                });
+                
+                // Remove highlight after 3 seconds
                 setTimeout(() => {
-                    errorElement.style.display = 'none';
+                    element.classList.remove('highlight');
                 }, 3000);
             }
         }
 
-        // Close modal if clicked outside
-        document.getElementById('passwordModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
-                clickCount = 0; // Reset clicks if modal closed
+        // ====== AI SELECTION SYSTEM ======
+        let currentAI = 'gemini'; // Default to Gemini
+
+        function selectAI(ai) {
+            currentAI = ai;
+            
+            // Update toggle buttons
+            document.querySelectorAll('.toggle-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            
+            if (ai === 'gemini') {
+                document.querySelector('.toggle-option.gemini').classList.add('active');
+                document.getElementById('aiName').textContent = 'Gemini AI';
+            } else {
+                document.querySelector('.toggle-option.chatgpt').classList.add('active');
+                document.getElementById('aiName').textContent = 'ChatGPT';
+            }
+            
+            // Show current AI indicator
+            const currentAIDiv = document.getElementById('currentAI');
+            currentAIDiv.style.display = 'block';
+        }
+
+        // ====== WORD COUNT FOR AI ASSISTANT ======
+        document.getElementById('chatgptQuestion').addEventListener('input', function() {
+            const text = this.value;
+            const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            const chars = text.length;
+            
+            document.getElementById('wordCount').textContent = words;
+            document.getElementById('charCount').textContent = chars;
+            
+            // Warning if approaching limits
+            if (words > 300 || chars > 1500) {
+                this.style.borderColor = 'red';
+            } else if (words > 250 || chars > 1200) {
+                this.style.borderColor = 'orange';
+            } else {
+                this.style.borderColor = '#10A37F';
             }
         });
 
-        // Press Enter to submit password
-        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkPassword();
+        // ====== AI ASSISTANT FUNCTION ======
+        async function askAI() {
+            const question = document.getElementById('chatgptQuestion').value.trim();
+            
+            if (!question) {
+                alert("Please enter a question for the AI Assistant!");
+                return;
+            }
+
+            const words = question.trim().split(/\s+/).length;
+            if (words > 300) {
+                alert("Please keep your question under 300 words!");
+                return;
+            }
+
+            const resultDiv = document.getElementById('chatgptResult');
+            resultDiv.innerHTML = `<div class="loading">💭 AI Assistant is thinking...</div>`;
+
+            try {
+                const response = await getAIReply(question);
+                
+                resultDiv.className = "pass";
+                resultDiv.classList.add('expanded');
+                resultDiv.innerHTML = `
+<strong>🤖 AI Assistant Response:</strong>\n\n
+${response}
+                `;
+                
+                // Smooth scroll to AI result
+                setTimeout(() => {
+                    smoothScrollToElement('chatgptResultContainer');
+                }, 500);
+                
+            } catch (error) {
+                console.error("AI Assistant Error:", error);
+                resultDiv.className = "fail";
+                resultDiv.innerHTML = `❌ AI Assistant Error: ${error.message}\n\n💡 Tip: You can use the "Web ChatGPT" button above to visit chat.openai.com for direct access.`;
+                
+                // Still scroll to result even on error
+                setTimeout(() => {
+                    smoothScrollToElement('chatgptResultContainer');
+                }, 500);
+            }
+        }
+
+        // ====== STATE-SPECIFIC TESTING FUNCTIONS ======
+        async function testWithChatGPT(url, type) {
+            const state = document.getElementById('stateSelect').value;
+            let stateSpecificPrompt = '';
+            
+            if (state && stateLaws[state]) {
+                const stateName = document.getElementById('stateSelect').selectedOptions[0].text;
+                const laws = stateLaws[state];
+                stateSpecificPrompt = `\n\nSPECIFIC STATE REQUIREMENTS (${stateName}):
+                - Cookie Law: ${laws.cookie}
+                - Accessibility Law: ${laws.accessibility}
+                
+                Analyze specifically for ${stateName} compliance.`;
+            }
+
+            const prompt = `As a professional web compliance expert, analyze the website ${url} for ${type}.${stateSpecificPrompt} Provide:
+1. A score from 0-100
+2. Detailed analysis of compliance
+3. Specific issues found
+4. Recommendations for improvement
+5. Overall verdict
+
+Be thorough and professional in your assessment.`;
+
+            try {
+                return await getAIReply(prompt);
+            } catch (error) {
+                console.error("AI Error:", error);
+                return `❌ AI Service Error: ${error.message}\n\nPlease check your Vercel backend configuration.`;
+            }
+        }
+
+        async function testWithGemini(url, type) {
+            const state = document.getElementById('stateSelect').value;
+            let stateSpecificPrompt = '';
+            
+            if (state && stateLaws[state]) {
+                const stateName = document.getElementById('stateSelect').selectedOptions[0].text;
+                const laws = stateLaws[state];
+                stateSpecificPrompt = `\n\nSPECIFIC STATE REQUIREMENTS (${stateName}):
+                - Cookie Law: ${laws.cookie}
+                - Accessibility Law: ${laws.accessibility}
+                
+                Analyze specifically for ${stateName} compliance.`;
+            }
+
+            const prompt = `As a professional web compliance expert, provide a comprehensive analysis of the website ${url} for ${type}.${stateSpecificPrompt} Include:
+
+1. Compliance score (0-100)
+2. Detailed assessment
+3. Specific issues identified
+4. Practical recommendations
+5. Overall conclusion
+
+Format your response in a clear, structured way.`;
+
+            try {
+                return await getAIReply(prompt);
+            } catch (error) {
+                console.error("AI Error:", error);
+                return `❌ AI Service Error: ${error.message}\n\nPlease check your Vercel backend configuration.`;
+            }
+        }
+
+        // ====== EVENT LISTENERS ======
+        document.getElementById("testCookieBtn").addEventListener("click", async () => {
+            const url = document.getElementById("websiteInput").value.trim();
+            const state = document.getElementById('stateSelect').value;
+            
+            if (!url) return alert("Please enter a website URL.");
+            if (!state) return alert("Please select a state for compliance testing.");
+
+            const resultDiv = document.getElementById("cookieResult");
+            const stateName = document.getElementById('stateSelect').selectedOptions[0].text;
+            resultDiv.innerHTML = `<div class="loading">🔄 Testing Cookie Compliance for ${stateName} with ${currentAI === 'gemini' ? 'Gemini AI...' : 'ChatGPT...'}</div>`;
+
+            try {
+                let result;
+                if (currentAI === 'gemini') {
+                    result = await testWithGemini(url, "cookie compliance, GDPR, CCPA, and privacy regulations");
+                } else {
+                    result = await testWithChatGPT(url, "cookie compliance, GDPR, CCPA, and privacy regulations");
+                }
+                
+                resultDiv.className = "pass";
+                resultDiv.innerHTML = `
+<strong>${currentAI === 'gemini' ? '🔮 Gemini AI' : '🤖 ChatGPT'} - ${stateName} Cookie Compliance Results:</strong>\n\n
+${result}
+                `;
+                
+                // Smooth scroll to cookie results
+                setTimeout(() => {
+                    smoothScrollToElement('cookieResultContainer');
+                }, 500);
+                
+            } catch (error) {
+                resultDiv.className = "fail";
+                resultDiv.innerHTML = `❌ Unexpected error: ${error.message}`;
+                
+                // Still scroll to results even on error
+                setTimeout(() => {
+                    smoothScrollToElement('cookieResultContainer');
+                }, 500);
             }
         });
 
-        // 🧪 Test Functions (Your existing functionality)
-        function testAccessibility() {
-            const resultsDiv = document.getElementById('accessibilityResults');
-            resultsDiv.innerHTML = `
-                <h3>✅ Accessibility Analysis Complete</h3>
-                <p><strong>Status:</strong> All tests passed</p>
-                <p><strong>Score:</strong> 95/100</p>
-                <p><strong>Issues Found:</strong> 2 minor warnings</p>
-                <ul>
-                    <li>Contrast ratio could be improved on buttons</li>
-                    <li>Add alt text to decorative images</li>
-                </ul>
-            `;
-        }
+        document.getElementById("testAccessibilityBtn").addEventListener("click", async () => {
+            const url = document.getElementById("websiteInput").value.trim();
+            const state = document.getElementById('stateSelect').value;
+            
+            if (!url) return alert("Please enter a website URL.");
+            if (!state) return alert("Please select a state for compliance testing.");
 
-        function testCookies() {
-            const resultsDiv = document.getElementById('cookieResults');
-            resultsDiv.innerHTML = `
-                <h3>✅ Cookie Compliance Check Complete</h3>
-                <p><strong>Status:</strong> Compliant</p>
-                <p><strong>GDPR:</strong> ✅ Passed</p>
-                <p><strong>CCPA:</strong> ✅ Passed</p>
-                <p><strong>Cookies Found:</strong> 3</p>
-                <ul>
-                    <li>session_id (Essential)</li>
-                    <li>user_preferences (Functional)</li>
-                    <li>analytics_tracking (Marketing)</li>
-                </ul>
-            `;
-        }
+            const resultDiv = document.getElementById("accessibilityResult");
+            const stateName = document.getElementById('stateSelect').selectedOptions[0].text;
+            resultDiv.innerHTML = `<div class="loading">🔄 Testing Accessibility for ${stateName} with ${currentAI === 'gemini' ? 'Gemini AI...' : 'ChatGPT...'}</div>`;
 
-        // 🖨️ Print/PDF Function
+            try {
+                let result;
+                if (currentAI === 'gemini') {
+                    result = await testWithGemini(url, "web accessibility following WCAG 2.1 guidelines");
+                } else {
+                    result = await testWithChatGPT(url, "web accessibility following WCAG 2.1 guidelines");
+                }
+                
+                resultDiv.className = "pass";
+                resultDiv.innerHTML = `
+<strong>${currentAI === 'gemini' ? '🔮 Gemini AI' : '🤖 ChatGPT'} - ${stateName} Accessibility Results:</strong>\n\n
+${result}
+                `;
+                
+                // Smooth scroll to accessibility results
+                setTimeout(() => {
+                    smoothScrollToElement('accessibilityResultContainer');
+                }, 500);
+                
+            } catch (error) {
+                resultDiv.className = "fail";
+                resultDiv.innerHTML = `❌ Unexpected error: ${error.message}`;
+                
+                // Still scroll to results even on error
+                setTimeout(() => {
+                    smoothScrollToElement('accessibilityResultContainer');
+                }, 500);
+            }
+        });
+
+        // ====== PRINT FUNCTIONS ======
         function generateReport() {
-            const accessibilityResults = document.getElementById('accessibilityResults').innerHTML;
-            const cookieResults = document.getElementById('cookieResults').innerHTML;
+            const accessibilityResults = document.getElementById('accessibilityResult').innerHTML;
+            const cookieResults = document.getElementById('cookieResult').innerHTML;
+            const websiteUrl = document.getElementById('websiteInput').value;
+            const stateName = document.getElementById('stateSelect').selectedOptions[0].text;
             
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
@@ -253,81 +844,140 @@
                 <head>
                     <title>Website Compliance Report</title>
                     <style>
-                        body { 
-                            font-family: Arial, sans-serif; 
-                            margin: 40px;
-                            line-height: 1.6;
-                        }
-                        .header { 
-                            text-align: center; 
-                            border-bottom: 2px solid #333;
-                            padding-bottom: 20px;
-                            margin-bottom: 30px;
-                        }
-                        .section { 
-                            margin-bottom: 40px; 
-                            page-break-inside: avoid;
-                        }
-                        .success { color: green; }
-                        .error { color: red; }
-                        .warning { color: orange; }
-                        ul { margin: 10px 0; }
-                        li { margin: 5px 0; }
-                        @media print {
-                            button { display: none; }
-                            body { margin: 20px; }
-                        }
-                        .print-controls {
-                            text-align: center;
-                            margin: 30px 0;
-                            padding: 20px;
-                            background: #f5f5f5;
-                        }
+                        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+                        .print-report-container { border: 3px solid red !important; padding: 30px; margin: 20px 0; background: white; border-radius: 10px; }
+                        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
+                        .section { margin-bottom: 40px; }
+                        @media print { button { display: none; } body { margin: 20px; } .print-report-container { border: 3px solid red !important; } }
+                        .print-controls { text-align: center; margin: 30px 0; padding: 20px; background: #f5f5f5; }
                     </style>
                 </head>
                 <body>
                     <div class="header">
                         <h1>📊 Website Compliance Report</h1>
-                        <p>Generated on: ${new Date().toLocaleDateString()}</p>
+                        <p><strong>Website:</strong> ${websiteUrl}</p>
+                        <p><strong>State:</strong> ${stateName}</p>
+                        <p><strong>AI Used:</strong> ${currentAI === 'gemini' ? 'Gemini AI' : 'ChatGPT'}</p>
+                        <p><strong>Generated on:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
                     </div>
                     
-                    <div class="section">
-                        <h2>🔍 Accessibility Analysis</h2>
-                        ${accessibilityResults}
-                    </div>
-                    
-                    <div class="section">
-                        <h2>🍪 Cookie Compliance</h2>
-                        ${cookieResults}
+                    <div class="print-report-container">
+                        <div class="section">
+                            <h2>🔍 Accessibility Analysis</h2>
+                            ${accessibilityResults}
+                        </div>
+                        
+                        <div class="section">
+                            <h2>🍪 Cookie Compliance</h2>
+                            ${cookieResults}
+                        </div>
                     </div>
                     
                     <div class="print-controls">
-                        <button onclick="window.print()" style="
-                            padding: 15px 30px;
-                            background: #28a745;
-                            color: white;
-                            border: none;
-                            border-radius: 5px;
-                            cursor: pointer;
-                            font-size: 16px;
-                            margin: 10px;
-                        ">🖨️ Print / Save as PDF</button>
-                        <button onclick="window.close()" style="
-                            padding: 15px 30px;
-                            background: #dc3545;
-                            color: white;
-                            border: none;
-                            border-radius: 5px;
-                            cursor: pointer;
-                            font-size: 16px;
-                            margin: 10px;
-                        ">Close Window</button>
+                        <button onclick="window.print()" style="padding: 15px 30px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px;">🖨️ Print / Save as PDF</button>
+                        <button onclick="window.close()" style="padding: 15px 30px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px;">Close Window</button>
                     </div>
                 </body>
                 </html>
             `);
             printWindow.document.close();
         }
+
+        function generateAIReport() {
+            const aiResults = document.getElementById('chatgptResult').innerHTML;
+            const question = document.getElementById('chatgptQuestion').value;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>AI Assistant Conversation Report</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+                        .print-report-container { border: 3px solid #10A37F !important; padding: 30px; margin: 20px 0; background: white; border-radius: 10px; }
+                        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
+                        .section { margin-bottom: 40px; }
+                        .question { background: #f0f9f4; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+                        @media print { button { display: none; } body { margin: 20px; } .print-report-container { border: 3px solid #10A37F !important; } }
+                        .print-controls { text-align: center; margin: 30px 0; padding: 20px; background: #f5f5f5; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>💬 AI Assistant Conversation Report</h1>
+                        <p><strong>Generated on:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+                    </div>
+                    
+                    <div class="print-report-container">
+                        <div class="section">
+                            <h2>❓ Your Question</h2>
+                            <div class="question">${question}</div>
+                        </div>
+                        
+                        <div class="section">
+                            <h2>🤖 AI Assistant Response</h2>
+                            ${aiResults}
+                        </div>
+                    </div>
+                    
+                    <div class="print-controls">
+                        <button onclick="window.print()" style="padding: 15px 30px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px;">🖨️ Print / Save as PDF</button>
+                        <button onclick="window.close()" style="padding: 15px 30px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px;">Close Window</button>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        // 🔐 SECRET LOGIN SYSTEM
+        let clickCount = 0;
+        const requiredClicks = 7;
+        const correctPassword = "333";
+
+        document.getElementById('secretTarget').addEventListener('click', function() {
+            clickCount++;
+            this.style.opacity = '0.8';
+            this.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                this.style.opacity = '0.3';
+                this.style.transform = 'scale(1)';
+            }, 200);
+            
+            if (clickCount >= requiredClicks) {
+                document.getElementById('passwordModal').style.display = 'flex';
+                clickCount = 0;
+            }
+        });
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const errorElement = document.getElementById('passwordError');
+            
+            if (input === correctPassword) {
+                document.getElementById('passwordModal').style.display = 'none';
+                document.getElementById('publicContent').style.display = 'none';
+                document.getElementById('testingPlatform').style.display = 'block';
+                document.getElementById('secretTarget').style.display = 'none';
+                selectAI('gemini');
+            } else {
+                errorElement.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                setTimeout(() => errorElement.style.display = 'none', 3000);
+            }
+        }
+
+        document.getElementById('passwordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+                clickCount = 0;
+            }
+        });
+
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkPassword();
+        });
     </script>
 </body>
 </html>
