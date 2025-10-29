@@ -86,6 +86,11 @@
         .web-chatgpt-button {
             background: #FF6B35;
         }
+
+        /* ✨ NEW: Style for the Clear button */
+        .clear-button {
+            background: #6c757d; 
+        }
         
         .results {
             background: #f8f9fa;
@@ -450,6 +455,9 @@
                 <button class="test-button print-button" onclick="generateAIReport()">
                     📄 Print Response
                 </button>
+                <button class="test-button clear-button" onclick="clearAIAssistant()">
+                    🗑️ Clear Fields
+                </button>
             </div>
         </div>
 
@@ -534,6 +542,18 @@
                     element.classList.remove('highlight');
                 }, 3000);
             }
+        }
+
+        // ✨ NEW: Function to clear the AI Assistant fields
+        function clearAIAssistant() {
+            document.getElementById('chatgptQuestion').value = '';
+            document.getElementById('chatgptQuestion').style.borderColor = '#10A37F'; // Reset border color
+            document.getElementById('wordCount').textContent = 0;
+            document.getElementById('charCount').textContent = 0;
+            
+            const resultDiv = document.getElementById('chatgptResult');
+            resultDiv.innerHTML = 'Ask a question to see AI response here...';
+            resultDiv.className = 'chatgpt-response-container'; // Reset classes
         }
         
         // API Connection Test Function - sends empty prompt
@@ -624,7 +644,7 @@
             }
         }
 
-        // 🌟 UPDATED: Test with AI function with new prompt logic
+        // Test with AI function with new prompt logic
         async function testWithAI(url, type) {
             const state = document.getElementById('stateSelect').value;
             let stateSpecificInfo = '';
@@ -731,7 +751,6 @@ Provide a detailed analysis including:
             try {
                 const result = await testWithAI(url, "cookie compliance");
                 
-                // The AI provides the score in the result text, so we rely on that for the analysis
                 resultDiv.className = "pass"; 
                 resultDiv.innerHTML = result;
                 
@@ -758,7 +777,6 @@ Provide a detailed analysis including:
             try {
                 const result = await testWithAI(url, "accessibility");
                 
-                // The AI provides the score in the result text, so we rely on that for the analysis
                 resultDiv.className = "pass"; 
                 resultDiv.innerHTML = result;
                 
