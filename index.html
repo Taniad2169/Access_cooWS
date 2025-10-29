@@ -253,7 +253,6 @@
             margin: 15px 0;
         }
 
-        /* ✨ ADDED: Smooth scroll for the whole page */
         html {
             scroll-behavior: smooth;
         }
@@ -334,7 +333,7 @@
 
     <div id="testingPlatform">
         <h1>🛡️ Your Private Testing Platform</h1>
-        <p>Welcome back, my love! Ready to run some tests? 💕</p>
+        <p>Welcome back! Ready to run some tests? 💕</p>
         
         <div class="demo-notice">
             <strong>✅ Live Mode:</strong> Connected to AI service via secure Vercel API endpoint!
@@ -522,7 +521,7 @@
             document.getElementById('aiName').textContent = 'ChatGPT';
         });
 
-        // ✨ ADDED: Smooth scroll function
+        // Smooth scroll function
         function smoothScrollToElement(elementId) {
             const element = document.getElementById(elementId);
             if (element) {
@@ -547,7 +546,6 @@
                 
                 const endpointPath = API_CONFIG.endpoints.chatgpt;
                 
-                // FIX: Send a valid prompt (even if empty) to satisfy backend validation
                 const response = await fetch(`${API_CONFIG.baseURL}${endpointPath}`, {
                     method: 'POST',
                     headers: {
@@ -626,7 +624,7 @@
             }
         }
 
-        // Test with AI function with accurate prompts
+        // 🌟 UPDATED: Test with AI function with new prompt logic
         async function testWithAI(url, type) {
             const state = document.getElementById('stateSelect').value;
             let stateSpecificInfo = '';
@@ -636,36 +634,38 @@
                 const laws = stateLaws[state];
                 stateSpecificInfo = `\n\nState: ${stateName}\nCookie Law: ${laws.cookie}\nAccessibility Law: ${laws.accessibility}`;
             }
+            
+            let prompt;
 
-            const prompt = `Analyze the website ${url} for ${type}. ${stateSpecificInfo}
+            if (type === "cookie compliance") {
+                prompt = `Analyze the website ${url} for Cookie Compliance. ${stateSpecificInfo}
 
-For Cookie Compliance check:
-- Privacy policy existence and cookie information
-- Cookie banner with Accept/Reject/Opt-out/Opt-in options
-- Do Not Sell links
-- Cookie settings/preferences
-- Terms & Conditions
-- Cookie policy page
-
-For Accessibility check:
-- Alt tags on images
-- Aria labels and roles
-- Proper heading structure
-- Color contrast ratios
-- Keyboard navigation
-- Form labels
-
-Scoring rules:
-- Full compliance = pass (green, 100%)
-- Partial compliance = partial (yellow, 65%) 
-- No compliance = fail (red, 0%)
+Cookie Compliance Scoring Criteria:
+- FULL PASS (100% - Green): If a **Privacy Policy link** is locatable, it automatically constitutes a pass for all three policies (Privacy Policy, Cookie Policy, and Terms & Conditions). This is the key passing condition. The AI must focus on finding this single Privacy Policy link.
+- PARTIAL (65% - Yellow): If a Privacy Policy link is missing, but a cookie banner with Accept/Reject or Do Not Sell options is present.
+- FAIL (0% - Red): If both a Privacy Policy link and a functional cookie banner are missing.
 
 Provide a detailed analysis including:
 1. Overall compliance score (out of 100)
-2. Key findings
+2. Key findings based on the criteria
+3. Specific issues detected (only if non-compliant)
+4. Recommendations for improvement
+5. State-specific compliance notes if applicable`;
+            } else if (type === "accessibility") {
+                prompt = `Analyze the website ${url} for Accessibility compliance. ${stateSpecificInfo}
+
+Accessibility Compliance Scoring Criteria:
+- FULL PASS (100% - Green): The site must have ALL of the following accessibility features: **ADA Compliance (in general), Magnify Glass, A+, A- font resizing, Contrast switcher, Greyscale mode, Underline Links, Read Aloud function, Focus Mode, Big Cursor, Keyboard Help, and Dyslexia Friendly font option.** If all are present, it is a 100% pass.
+- PARTIAL (65% - Yellow): If the site has *some* of the required features (e.g., only Contrast and Keyboard help, or only a few of the listed ADA features), it is a partial pass, marked for improvement.
+- FAIL (0% - Red): If the site has no evident dedicated accessibility widget/features and is not fundamentally accessible (e.g., missing basic Alt tags, poor contrast).
+
+Provide a detailed analysis including:
+1. Overall compliance score (out of 100)
+2. Key findings based on the criteria (list which required features are present/missing)
 3. Specific issues detected
 4. Recommendations for improvement
 5. State-specific compliance notes if applicable`;
+            }
 
             try {
                 const result = await callAPI('chatgpt', { 
@@ -708,7 +708,7 @@ Provide a detailed analysis including:
                 resultDiv.className = "pass chatgpt-response-container expanded";
                 resultDiv.innerHTML = `<strong>🤖 ChatGPT Response:</strong>\n\n${result.response || result.message}`;
                 
-                // ✨ CALL: Smooth scroll to AI result container
+                // CALL: Smooth scroll to AI result container
                 smoothScrollToElement('chatgptResultContainer');
                 
             } catch (error) {
@@ -731,10 +731,11 @@ Provide a detailed analysis including:
             try {
                 const result = await testWithAI(url, "cookie compliance");
                 
-                resultDiv.className = "pass";
+                // The AI provides the score in the result text, so we rely on that for the analysis
+                resultDiv.className = "pass"; 
                 resultDiv.innerHTML = result;
                 
-                // ✨ CALL: Smooth scroll to Cookie result container
+                // CALL: Smooth scroll to Cookie result container
                 smoothScrollToElement('cookieResultContainer');
                 
             } catch (error) {
@@ -757,10 +758,11 @@ Provide a detailed analysis including:
             try {
                 const result = await testWithAI(url, "accessibility");
                 
-                resultDiv.className = "pass";
+                // The AI provides the score in the result text, so we rely on that for the analysis
+                resultDiv.className = "pass"; 
                 resultDiv.innerHTML = result;
                 
-                // ✨ CALL: Smooth scroll to Accessibility result container
+                // CALL: Smooth scroll to Accessibility result container
                 smoothScrollToElement('accessibilityResultContainer');
                 
             } catch (error) {
