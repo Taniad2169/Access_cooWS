@@ -381,7 +381,7 @@
 
     <div id="testingPlatform">
         <h1>🛡️ Your Private Testing Platform</h1>
-        <p>Welcome back, my love! Ready to run some tests? 💕</p>
+        <p>Welcome back! Ready to run some tests?</p>
         
         <div class="demo-notice">
             <strong>✅ Live Mode:</strong> Connected to AI services via secure Vercel API endpoints!
@@ -886,7 +886,6 @@
             }
         });
 
-        // This was the incomplete section in your code!
         document.getElementById("testAccessibilityBtn").addEventListener("click", async () => {
             const url = document.getElementById("websiteInput").value.trim();
             const state = document.getElementById('stateSelect').value;
@@ -971,8 +970,8 @@
         const passwordModal = document.getElementById('passwordModal');
         const publicContent = document.getElementById('publicContent');
         const testingPlatform = document.getElementById('testingPlatform');
-        // NOTE: Set your secret password here
-        const correctPassword = "testme"; 
+        // NOTE: Restored your secret password here
+        const correctPassword = "333"; 
 
         secretTarget.addEventListener('click', () => {
             clickCount++;
