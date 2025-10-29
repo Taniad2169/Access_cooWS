@@ -345,7 +345,7 @@
             border: 1px solid #ffeaa7;
         }
 
-        /* Your additional styles for the new functionality */
+        /* Styles for advanced test */
         .red { color: red; }
         .yellow { color: orange; }
         .green { color: green; }
@@ -697,62 +697,28 @@
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   
   try {
-    const { mainHTML, privacyContent, url } = req.body;
-
-    const prompt = \`
-Analyze the website at \${url}.
-Main HTML:
-\${mainHTML}
-
-Privacy policy content (if available):
-\${privacyContent}
-
-Check cookies & privacy:
-- If privacy policy exists and contains cookie info and terms, auto-pass.
-- Otherwise check cookie banner (Accept/Reject/Opt-out/Opt-in), Do Not Sell, settings, cookie policy, T&C.
-Check accessibility:
-- alt tags, aria labels, headings, contrast, keyboard navigation
-
-Scoring rules:
-- Full compliance = pass (green, 100%)
-- Partial = partial (yellow, 65%)
-- None = fail (red, 0%)
-
-Return strictly JSON:
-{
-  "cookies": "pass/partial/fail",
-  "accessibility": "pass/partial/fail",
-  "score": 0-100,
-  "color": "green/yellow/red",
-  "notes": "list missing items if any"
-}
-\`;
-
-    const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": \`Bearer \${process.env.OPENAI_API_KEY}\`
-        },
-        body: JSON.stringify({
-            model: "gpt-4o-mini",
-            messages: [{ role: "user", content: prompt }],
-            temperature: 0
-        })
+    const { prompt } = req.body;
+    if (!process.env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY not configured');
+    
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': \`Bearer \${process.env.OPENAI_API_KEY}\`
+      },
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 1000
+      })
     });
-
-    const openaiData = await openaiRes.json();
-    const content = openaiData.choices[0].message.content;
-
-    const jsonStart = content.indexOf("{");
-    const jsonEnd = content.lastIndexOf("}") + 1;
-    const parsed = JSON.parse(content.slice(jsonStart, jsonEnd));
-
-    res.status(200).json(parsed);
-
+    
+    const data = await response.json();
+    const result = data.choices[0].message.content;
+    
+    res.status(200).json({ response: result, message: 'Success' });
   } catch (error) {
-    console.error("ChatGPT API Error:", error);
-    res.status(500).json({ error: "ChatGPT API Error: " + error.message });
+    res.status(500).json({ error: \`ChatGPT API Error: \${error.message}\` });
   }
 }</code></pre>
                 
@@ -766,7 +732,7 @@ Return strictly JSON:
             setupDiv.style.display = 'block';
         }
 
-        // 💕 YOUR ADVANCED COMPLIANCE TEST FUNCTION - Added exactly as you provided
+        // 💕 YOUR EXACT ADVANCED COMPLIANCE TEST FUNCTION 
         async function advancedComplianceTest() {
             const url = document.getElementById("websiteInput").value.trim();
             if (!url) {
