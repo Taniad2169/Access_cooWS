@@ -1,56 +1,50 @@
-// /api/chatgpt.js - CORRECTED VERSION
-
-// Helper function to parse the body correctly across different Vercel runtimes
-async function parseBody(req) {
-    if (req.body && typeof req.body === 'object') {
-        // Handle cases where the body is already parsed
-        return req.body;
-    }
-    
-    // Attempt to use req.json() for newer Web Standard Request objects
-    if (typeof req.json === 'function') {
-        try {
-            return await req.json();
-        } catch (e) {
-            // If req.json fails (e.g., empty body), fall through
-        }
-    }
-
-    // Standard Node.js way to read the body stream
-    try {
-        let body = '';
-        for await (const chunk of req) {
-            body += chunk.toString();
-        }
-        return body ? JSON.parse(body) : {};
-    } catch (e) {
-        // If parsing the raw body stream fails
-        return {};
-    }
-}
+// /api/chatgpt.js - OPTIMIZED & FIXED VERSION
 
 export default async function handler(req, res) {
-    // Standard CORS headers
+    // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     
-    if (req.method === 'OPTIONS') return res.status(200).end();
-    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+    
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
     
     try {
-        // *** FIX APPLIED HERE: Use the robust body parser ***
-        const body = await parseBody(req);
-        const { prompt } = body;
+        // Parse body - Vercel automatically parses JSON for us
+        const { prompt, test, type, url, state } = req.body || {};
         
-        if (!prompt) {
-             return res.status(400).json({ error: 'Missing prompt in request body' });
+        // Handle test request
+        if (test) {
+            return res.status(200).json({ 
+                status: 'ok', 
+                message: 'API is working correctly',
+                timestamp: new Date().toISOString()
+            });
         }
         
-        if (!process.env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY not configured in Vercel Environment Variables');
+        // Validate prompt
+        if (!prompt) {
+            return res.status(400).json({ 
+                error: 'Missing prompt in request body' 
+            });
+        }
         
-        // Your existing ChatGPT API call logic
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        // Check for API key
+        if (!process.env.OPENAI_API_KEY) {
+            console.error('OPENAI_API_KEY not found in environment variables');
+            return res.status(500).json({ 
+                error: 'OPENAI_API_KEY not configured. Please add it to Vercel Environment Variables.' 
+            });
+        }
+        
+        // Call OpenAI API
+        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -58,21 +52,52 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify({
                 model: 'gpt-3.5-turbo',
-                messages: [{ role: 'user', content: prompt }],
-                max_tokens: 1000
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'You are a helpful assistant specializing in web accessibility and compliance analysis.'
+                    },
+                    {
+                        role: 'user',
+                        content: prompt
+                    }
+                ],
+                max_tokens: 1500,
+                temperature: 0.7
             })
         });
         
-        const data = await response.json();
-        if (data.choices && data.choices.length > 0) {
-            const result = data.choices[0].message.content;
-            res.status(200).json({ response: result, message: 'Success' });
-        } else if (data.error) {
-            throw new Error(data.error.message);
-        } else {
-            throw new Error('No valid response or choices from OpenAI API.');
+        // Check if OpenAI request was successful
+        if (!openaiResponse.ok) {
+            const errorData = await openaiResponse.json();
+            console.error('OpenAI API Error:', errorData);
+            throw new Error(errorData.error?.message || 'OpenAI API request failed');
         }
+        
+        const data = await openaiResponse.json();
+        
+        // Validate response
+        if (!data.choices || data.choices.length === 0) {
+            throw new Error('No response choices returned from OpenAI');
+        }
+        
+        const result = data.choices[0].message.content;
+        
+        // Return success response
+        return res.status(200).json({ 
+            response: result,
+            message: 'Success',
+            type: type || 'general',
+            timestamp: new Date().toISOString()
+        });
+        
     } catch (error) {
-        res.status(500).json({ error: `ChatGPT API Error: ${error.message}` });
+        console.error('API Error:', error);
+        
+        // Return detailed error
+        return res.status(500).json({ 
+            error: error.message || 'Internal server error',
+            details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
     }
 }
